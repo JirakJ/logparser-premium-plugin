@@ -1,6 +1,7 @@
 package com.jakubjirak.logparser.premium.bookmarks
 
 import com.intellij.openapi.components.*
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.time.Instant
@@ -10,7 +11,7 @@ import java.time.Instant
 class LogBookmarkManager(private val project: Project) : PersistentStateComponent<LogBookmarkManager.State> {
     
     private var state = State()
-    private val licenseManager = LicenseManager.getInstance(project)
+    private val licenseManager = LicenseManager.getInstance()
     
     data class State(var bookmarks: MutableList<Bookmark> = mutableListOf())
     
@@ -49,6 +50,6 @@ class LogBookmarkManager(private val project: Project) : PersistentStateComponen
     override fun loadState(state: State) { this.state = state }
     
     companion object {
-        fun getInstance(project: Project) = project.service<LogBookmarkManager>()
+        fun getInstance(project: Project): LogBookmarkManager = project.service()
     }
 }

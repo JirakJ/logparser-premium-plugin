@@ -1,6 +1,7 @@
 package com.jakubjirak.logparser.premium.i18n
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.util.*
@@ -8,7 +9,7 @@ import java.util.*
 @Service(Service.Level.PROJECT)
 class LocalizationManager(private val project: Project) {
     
-    private val licenseManager = LicenseManager.getInstance(project)
+    private val licenseManager = LicenseManager.getInstance()
     private var currentLocale: Locale = Locale.ENGLISH
     
     private val translations = mapOf(
@@ -29,6 +30,6 @@ class LocalizationManager(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project) = project.service<LocalizationManager>()
+        fun getInstance(project: Project): LocalizationManager = project.service()
     }
 }

@@ -5,6 +5,8 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
+import com.jetbrains.rd.util.lifetime.Lifetime
+import com.jetbrains.rd.util.reactive.Property
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -39,6 +41,7 @@ class LicenseManager : PersistentStateComponent<LicenseState> {
         }
         
         const val TRIAL_DAYS = 30
+        const val PRODUCT_CODE = "PLOGPARSERPRO"
     }
 
     override fun getState(): LicenseState = state
@@ -48,6 +51,12 @@ class LicenseManager : PersistentStateComponent<LicenseState> {
     }
 
     fun isPremium(): Boolean {
+        // Check JetBrains Marketplace license first
+        if (hasMarketplaceLicense()) {
+            return true
+        }
+        
+        // Fallback to manual license check
         return when (state.type) {
             LicenseType.PREMIUM, LicenseType.TEAM, LicenseType.ENTERPRISE -> {
                 if (state.expiresAt.isNotEmpty()) {
@@ -59,6 +68,18 @@ class LicenseManager : PersistentStateComponent<LicenseState> {
             }
             LicenseType.PREMIUM_TRIAL -> isTrialActive()
             else -> false
+        }
+    }
+    
+    private fun hasMarketplaceLicense(): Boolean {
+        // Check if user has active paid license from JetBrains Marketplace
+        // This integrates with JetBrains' built-in licensing system
+        try {
+            // TODO: Integrate with com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService
+            // For now, return false - will be activated after Marketplace submission
+            return false
+        } catch (e: Exception) {
+            return false
         }
     }
 

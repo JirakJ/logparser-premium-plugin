@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="com.jakubjirak.sources.KubernetesLogSource"/>
+    </extensions>
+</idea-plugin>

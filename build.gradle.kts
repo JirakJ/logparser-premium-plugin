@@ -54,29 +54,32 @@ tasks {
         pluginDescription.set("""
             <h1>LogParser Pro - Professional Log Analysis for JetBrains IDEs</h1>
             
-            <h2>🆓 Free Features:</h2>
+            <h2>Core Features:</h2>
             <ul>
                 <li>Syntax highlighting for JSON, plaintext, Apache/Nginx logs</li>
                 <li>Log level filtering (ERROR, WARN, INFO, DEBUG)</li>
-                <li>Keyword search and basic filtering</li>
+                <li>Keyword search and advanced filtering</li>
                 <li>Auto-detect common patterns (Spring Boot, Node.js, Python)</li>
-                <li>Stack trace folding</li>
+                <li>Stack trace folding and navigation</li>
             </ul>
             
-            <h2>💎 Premium Features ($79/year):</h2>
+            <h2>Advanced Features:</h2>
             <ul>
-                <li><b>Transaction/Correlation ID Tracking</b> - Cross-pod log correlation</li>
-                <li><b>Multi-source Aggregation</b> - Kubernetes, OpenShift, SSH, Docker</li>
-                <li><b>Real-time Multi-source Monitoring</b> - Live tail from 10+ sources</li>
-                <li><b>AI Pattern Recognition</b> - ML-powered anomaly detection</li>
-                <li><b>Advanced Analytics</b> - Dashboards, heatmaps, metrics</li>
-                <li><b>Team Collaboration</b> - Shared queries, annotations</li>
-                <li><b>Unlimited Performance</b> - Handle GB+ files effortlessly</li>
+                <li><b>Transaction/Correlation ID Tracking</b> - Cross-pod log correlation across distributed systems</li>
+                <li><b>Multi-source Aggregation</b> - Connect to Kubernetes, OpenShift, SSH, Docker, cloud storage</li>
+                <li><b>Real-time Multi-source Monitoring</b> - Live tail from multiple sources simultaneously</li>
+                <li><b>AI Pattern Recognition</b> - ML-powered anomaly detection and root cause analysis</li>
+                <li><b>Advanced Analytics</b> - Interactive dashboards, heatmaps, metrics extraction</li>
+                <li><b>Team Collaboration</b> - Shared queries, annotations, incident reports</li>
+                <li><b>High Performance</b> - Handle GB+ files with instant search and memory-efficient streaming</li>
+                <li><b>Visual Timeline</b> - Transaction flow visualization across microservices</li>
+                <li><b>Smart Suggestions</b> - Context-aware search recommendations</li>
+                <li><b>Log Playback</b> - Replay events with speed control</li>
             </ul>
             
             <p>Stop jumping between kubectl logs, SSH sessions, and grep. See your entire distributed transaction in one place.</p>
             
-            <p><a href="https://logparser.dev">Learn more at logparser.dev</a></p>
+            <p><a href="https://logparser.dev">Learn more</a></p>
         """.trimIndent())
         
         changeNotes.set("""

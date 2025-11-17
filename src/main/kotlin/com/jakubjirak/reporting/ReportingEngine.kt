@@ -227,6 +227,7 @@ class ReportingEngine {
             .filter { it.level.name == "ERROR" }
             .groupBy { it.timestamp?.dayOfMonth ?: 0 }
             .mapValues { it.value.size.toDouble() }
+            .mapKeys { it.key.toString() }
         
         return ReportSection.ChartSection(
             title = "Error Trend",

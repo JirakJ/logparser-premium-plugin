@@ -34,8 +34,10 @@ class LogParser(
                             )
                             entries[entries.lastIndex] = updatedEntry
                         }
+                        Unit
                     } else {
                         entries.add(entry)
+                        Unit
                     }
                 }
             }

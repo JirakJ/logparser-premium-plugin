@@ -2,8 +2,10 @@ package com.jakubjirak.logparser.premium
 
 import com.intellij.openapi.project.Project
 import com.jakubjirak.parsers.LogEntry
+import com.jakubjirak.parsers.LogLevel
 import java.time.Duration
-import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * Premium Feature: Reconstruct incident timeline from distributed logs
@@ -13,8 +15,8 @@ class IncidentTimelineReconstructor(private val project: Project) {
     
     data class Incident(
         val id: String,
-        val startTime: Instant,
-        val endTime: Instant?,
+        val startTime: LocalDateTime,
+        val endTime: LocalDateTime?,
         val severity: Severity,
         val rootCause: RootCause?,
         val timeline: List<TimelineEvent>,
@@ -26,13 +28,13 @@ class IncidentTimelineReconstructor(private val project: Project) {
     
     data class RootCause(
         val service: String,
-        val timestamp: Instant,
+        val timestamp: LocalDateTime,
         val error: String,
         val confidence: Double
     )
     
     data class TimelineEvent(
-        val timestamp: Instant,
+        val timestamp: LocalDateTime,
         val type: EventType,
         val service: String,
         val message: String,
@@ -43,15 +45,17 @@ class IncidentTimelineReconstructor(private val project: Project) {
         ERROR_OCCURRED, SERVICE_DEGRADED, TIMEOUT, CONNECTION_FAILED, SERVICE_RECOVERED
     }
     
-    fun reconstructIncident(logs: List<LogEntry>, incidentStartTime: Instant): Incident {
+    fun reconstructIncident(logs: List<LogEntry>, incidentStartTime: LocalDateTime): Incident {
         val relevantLogs = logs.filter { 
-            it.timestamp >= incidentStartTime && it.level in listOf("ERROR", "WARN", "FATAL")
+            it.timestamp != null && 
+            !it.timestamp!!.isBefore(incidentStartTime) && 
+            it.level in listOf(LogLevel.ERROR, LogLevel.WARN, LogLevel.FATAL)
         }
         val events = relevantLogs.map { log ->
             TimelineEvent(
-                timestamp = log.timestamp,
+                timestamp = log.timestamp!!,
                 type = classifyEventType(log),
-                service = log.source,
+                service = log.loggerName ?: "unknown",
                 message = log.message,
                 logEntry = log
             )
@@ -63,7 +67,7 @@ class IncidentTimelineReconstructor(private val project: Project) {
         }
         
         return Incident(
-            id = "INC-${incidentStartTime.toEpochMilli()}",
+            id = "INC-${incidentStartTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()}",
             startTime = incidentStartTime,
             endTime = events.lastOrNull { it.type == EventType.SERVICE_RECOVERED }?.timestamp,
             severity = calculateSeverity(events),

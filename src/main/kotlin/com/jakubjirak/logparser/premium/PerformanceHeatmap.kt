@@ -3,7 +3,8 @@ package com.jakubjirak.logparser.premium
 import com.intellij.openapi.project.Project
 import com.jakubjirak.parsers.LogEntry
 import java.time.Duration
-import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * Premium Feature: Performance heatmap visualization
@@ -18,10 +19,10 @@ class PerformanceHeatmap(private val project: Project) {
         val metric: MetricType
     )
     
-    data class TimeRange(val start: Instant, val end: Instant)
+    data class TimeRange(val start: LocalDateTime, val end: LocalDateTime)
     
     data class HeatmapCell(
-        val timestamp: Instant,
+        val timestamp: LocalDateTime,
         val service: String,
         val value: Double,
         val count: Int
@@ -35,15 +36,16 @@ class PerformanceHeatmap(private val project: Project) {
         metric: MetricType = MetricType.RESPONSE_TIME,
         granularity: Duration = Duration.ofMinutes(5)
     ): HeatmapData {
-        val services = logs.map { it.source }.distinct().sorted()
+        val services = logs.mapNotNull { it.loggerName }.distinct().sorted()
         val timeSlots = generateTimeSlots(timeRange, granularity)
         
         val cells = timeSlots.map { slot ->
             services.map { service ->
                 val logsInCell = logs.filter { log ->
-                    log.source == service &&
-                    log.timestamp >= slot &&
-                    log.timestamp < slot.plus(granularity)
+                    log.loggerName == service &&
+                    log.timestamp != null &&
+                    !log.timestamp!!.isBefore(slot) &&
+                    log.timestamp!!.isBefore(slot.plus(granularity))
                 }
                 
                 HeatmapCell(
@@ -58,10 +60,10 @@ class PerformanceHeatmap(private val project: Project) {
         return HeatmapData(timeRange, services, cells, metric)
     }
     
-    private fun generateTimeSlots(range: TimeRange, granularity: Duration): List<Instant> {
-        val slots = mutableListOf<Instant>()
+    private fun generateTimeSlots(range: TimeRange, granularity: Duration): List<LocalDateTime> {
+        val slots = mutableListOf<LocalDateTime>()
         var current = range.start
-        while (current < range.end) {
+        while (current.isBefore(range.end)) {
             slots.add(current)
             current = current.plus(granularity)
         }
@@ -71,7 +73,7 @@ class PerformanceHeatmap(private val project: Project) {
     private fun calculateMetricValue(logs: List<LogEntry>, metric: MetricType): Double {
         if (logs.isEmpty()) return 0.0
         return when (metric) {
-            MetricType.ERROR_RATE -> logs.count { it.level in listOf("ERROR", "FATAL") }.toDouble() / logs.size
+            MetricType.ERROR_RATE -> logs.count { it.level.name in listOf("ERROR", "FATAL") }.toDouble() / logs.size
             MetricType.REQUEST_RATE -> logs.size.toDouble()
             else -> 0.0
         }

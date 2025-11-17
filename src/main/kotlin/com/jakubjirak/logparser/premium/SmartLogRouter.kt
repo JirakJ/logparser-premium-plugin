@@ -62,8 +62,8 @@ class SmartLogRouter(private val project: Project) {
     private fun matchesConditions(entry: LogEntry, conditions: List<Condition>): Boolean {
         return conditions.all { condition ->
             when (condition.type) {
-                ConditionType.LEVEL_EQUALS -> entry.level.equals(condition.pattern, ignoreCase = true)
-                ConditionType.MESSAGE_CONTAINS -> entry.message.contains(condition.pattern ?: "", ignoreCase = true)
+                ConditionType.LEVEL_EQUALS -> entry.level.name.equals(condition.pattern, true)
+                ConditionType.MESSAGE_CONTAINS -> entry.message.contains(condition.pattern ?: "", true)
                 ConditionType.CORRELATION_ID_EXISTS -> entry.correlationId != null
                 else -> true
             }

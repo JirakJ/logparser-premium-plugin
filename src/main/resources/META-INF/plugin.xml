@@ -1,0 +1,95 @@
+<idea-plugin>
+    <id>com.jakubjirak.logparser.pro</id>
+    <name>LogParser Pro</name>
+    <vendor email="jirak@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends optional="true" config-file="kubernetes-support.xml">com.intellij.kubernetes</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- File Type -->
+        <fileType 
+            name="Log File" 
+            implementationClass="com.jakubjirak.core.LogFileType"
+            fieldName="INSTANCE" 
+            language="Log" 
+            extensions="log;txt;out"/>
+        
+        <!-- Tool Window -->
+        <toolWindow 
+            id="LogParser Pro" 
+            anchor="bottom" 
+            icon="/icons/logparser.svg"
+            factoryClass="com.jakubjirak.ui.LogParserToolWindowFactory"/>
+        
+        <!-- Project Service -->
+        <projectService serviceImplementation="com.jakubjirak.core.LogParserService"/>
+        
+        <!-- Application Service for License Management -->
+        <applicationService serviceImplementation="com.jakubjirak.core.LicenseManager"/>
+        
+        <!-- Settings -->
+        <applicationConfigurable 
+            parentId="tools" 
+            instance="com.jakubjirak.ui.settings.LogParserConfigurable"
+            id="com.jakubjirak.logparser.settings" 
+            displayName="LogParser Pro"/>
+        
+        <!-- File Editor Provider -->
+        <fileEditorProvider implementation="com.jakubjirak.ui.editor.LogFileEditorProvider"/>
+        
+        <!-- Notification Group -->
+        <notificationGroup id="LogParser Pro" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="LogParser.MainMenu" text="LogParser Pro" popup="true">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            
+            <action id="LogParser.OpenFile" 
+                    class="com.jakubjirak.ui.actions.OpenLogFileAction"
+                    text="Open Log File" 
+                    description="Open log file for analysis"
+                    icon="AllIcons.Actions.MenuOpen"/>
+            
+            <action id="LogParser.ConnectSource" 
+                    class="com.jakubjirak.ui.actions.ConnectSourceAction"
+                    text="Connect Log Source (Premium)" 
+                    description="Connect to Kubernetes, SSH, Docker"
+                    icon="AllIcons.Actions.Lightning"/>
+            
+            <action id="LogParser.TrackCorrelation" 
+                    class="com.jakubjirak.ui.actions.TrackCorrelationAction"
+                    text="Track Transaction ID (Premium)" 
+                    description="Track correlation ID across sources"
+                    icon="AllIcons.Actions.Find"/>
+            
+            <separator/>
+            
+            <action id="LogParser.UpgradePremium" 
+                    class="com.jakubjirak.ui.actions.UpgradePremiumAction"
+                    text="Upgrade to Premium" 
+                    description="Unlock all premium features"
+                    icon="AllIcons.Actions.Lightning"/>
+            
+            <action id="LogParser.ManageLicense" 
+                    class="com.jakubjirak.ui.actions.ManageLicenseAction"
+                    text="Manage License" 
+                    description="View and manage your license"/>
+        </group>
+        
+        <group id="LogParser.EditorPopup" text="LogParser Pro" popup="true">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            
+            <action id="LogParser.ExtractPattern" 
+                    class="com.jakubjirak.ui.actions.ExtractPatternAction"
+                    text="Extract Pattern" 
+                    description="Extract pattern from selected text"/>
+            
+            <action id="LogParser.FindCorrelationId" 
+                    class="com.jakubjirak.ui.actions.FindCorrelationIdAction"
+                    text="Find Correlation ID (Premium)" 
+                    description="Find this correlation ID across sources"/>
+        </group>
+    </actions>
+</idea-plugin>

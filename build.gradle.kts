@@ -100,6 +100,11 @@ tasks {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
     
+    // Disable searchable options for paid plugins
+    buildSearchableOptions {
+        enabled = false
+    }
+    
     test {
         useJUnitPlatform()
     }

@@ -9,9 +9,9 @@ plugins {
 
 group = "com.jakubjirak"
 
-// Auto-increment version on each build
-val buildNumber = System.getenv("BUILD_NUMBER") ?: LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-version = "1.0.$buildNumber"
+// Auto-increment version on each build (SemVer: MAJOR.MINOR.PATCH)
+val buildNumber = System.getenv("BUILD_NUMBER") ?: LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+version = "1.0.0-build.$buildNumber"
 
 repositories {
     mavenCentral()

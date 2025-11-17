@@ -21,13 +21,9 @@ class OpenLogFileAction : AnAction() {
             }
         }
         
-        FileChooserFactory.getInstance()
+        val chooser = FileChooserFactory.getInstance()
             .createFileChooser(descriptor, project, null)
-            .choose(project) { files ->
-                if (files.isNotEmpty()) {
-                    val file = files[0]
-                    // TODO: Open file in LogParser editor
-                }
-            }
+        
+        chooser.choose(project, null)
     }
 }

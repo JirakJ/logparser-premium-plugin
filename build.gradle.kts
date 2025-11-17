@@ -97,7 +97,11 @@ tasks {
     }
 
     publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        token.set(
+            (project.findProperty("publishToken") as? String)
+                ?: System.getenv("PUBLISH_TOKEN")
+                ?: ""
+        )
     }
     
     // Disable searchable options for paid plugins

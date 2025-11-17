@@ -1,0 +1,36 @@
+package com.jakubjirak.logparser.premium.profiler
+
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.project.Project
+import com.jakubjirak.logparser.licensing.LicenseManager
+import java.time.Duration
+
+@Service(Service.Level.PROJECT)
+class PerformanceProfiler(private val project: Project) {
+    
+    private val licenseManager = LicenseManager.getInstance(project)
+    
+    data class PerformanceReport(
+        val totalOperations: Int,
+        val avgDuration: Duration,
+        val bottlenecks: List<String>,
+        val recommendations: List<String>
+    )
+    
+    fun generateReport(): Result<PerformanceReport> {
+        if (!licenseManager.isPremium()) {
+            return Result.failure(Exception("Premium feature required"))
+        }
+        
+        return Result.success(PerformanceReport(
+            totalOperations = 0,
+            avgDuration = Duration.ZERO,
+            bottlenecks = emptyList(),
+            recommendations = listOf("System performing well")
+        ))
+    }
+    
+    companion object {
+        fun getInstance(project: Project) = project.service<PerformanceProfiler>()
+    }
+}

@@ -5,10 +5,35 @@
     <vendor email="jirak@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
 
     <description><![CDATA[
-        Advanced log file analysis and monitoring tool for JetBrains IDEs.
-        Features include syntax highlighting, real-time log tailing, pattern matching,
-        alerting, cloud storage integration, and team collaboration.
-    ]]></description>
+<h2>LogParser Pro</h2>
+<p>
+  Stop switching between your IDE and log viewers. LogParser Pro brings professional log analysis directly
+  into your JetBrains IDE with syntax highlighting, real-time tailing, pattern matching, and intelligent
+  alerting for faster debugging.
+</p>
+
+<h2>Key Features</h2>
+<ul>
+  <li><b>Syntax Highlighting</b> — Color-coded log levels (ERROR, WARN, INFO, DEBUG, TRACE)</li>
+  <li><b>Real-Time Tailing</b> — Follow log files live with automatic scrolling</li>
+  <li><b>Pattern Matching</b> — Regex-based search and filtering with saved patterns</li>
+  <li><b>Smart Alerting</b> — Notifications when specific log patterns appear</li>
+  <li><b>Multi-Format Support</b> — JSON, XML, plain text, and custom log formats</li>
+  <li><b>Correlation ID Tracking</b> — Follow request flows across distributed log sources</li>
+</ul>
+
+<h2>Why LogParser Pro?</h2>
+<p>
+  Debugging distributed systems requires analyzing logs from multiple sources simultaneously. LogParser Pro
+  consolidates your log workflow into a single IDE window with powerful search and filtering.
+</p>
+
+<h2>Free vs Pro</h2>
+<ul>
+  <li><b>Free:</b> Local file analysis, syntax highlighting, pattern matching, basic filtering</li>
+  <li><b>Pro:</b> Remote log sources (Kubernetes, SSH, Docker), real-time tailing, correlation ID tracking, transaction tracing, cloud storage integration, and team collaboration</li>
+</ul>
+]]></description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends optional="true" config-file="kubernetes-support.xml">com.intellij.kubernetes</depends>

@@ -1,1 +1,8 @@
-rootProject.name = "logparser-pro"
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "logparser"

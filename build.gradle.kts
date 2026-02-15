@@ -1,118 +1,167 @@
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.21"
-    id("org.jetbrains.intellij") version "1.16.1"
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.guardsquare:proguard-gradle:7.6.1")
+    }
 }
 
-group = "com.jakubjirak"
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.intellij.platform)
+    alias(libs.plugins.detekt)
+}
 
-// Auto-increment version on each build (SemVer: MAJOR.MINOR.PATCH)
-val buildNumber = System.getenv("BUILD_NUMBER") ?: LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
-version = "1.0.0-build.$buildNumber"
+group = providers.gradleProperty("pluginGroup").get()
+version = providers.gradleProperty("pluginVersion").get()
+
+kotlin {
+    jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
+}
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.apache.lucene:lucene-core:9.8.0")
-    implementation("org.apache.lucene:lucene-queryparser:9.8.0")
-    implementation("org.apache.lucene:lucene-analyzers-common:8.11.2")
+    intellijPlatform {
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+        )
+        instrumentationTools()
+        pluginVerifier()
+        zipSigner()
+    }
+
     implementation("io.reactivex.rxjava3:rxjava:3.1.8")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.yaml:snakeyaml:2.2")
-    
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
 }
 
-intellij {
-    version.set("2024.2")
-    type.set("IC") // IntelliJ IDEA Community Edition
-    plugins.set(listOf("com.intellij.java"))
+intellijPlatform {
+    pluginConfiguration {
+        id = providers.gradleProperty("pluginGroup")
+        name = providers.gradleProperty("pluginName")
+        version = providers.gradleProperty("pluginVersion")
+
+        ideaVersion {
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+        }
+
+        vendor {
+            name = "Jakub Jirák"
+            url = "https://github.com/jakubjirak"
+        }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
+        }
+    }
+
+    signing {
+        // Configure via environment variables:
+        // ORG_GRADLE_PROJECT_signCertificateChain
+        // ORG_GRADLE_PROJECT_signPrivateKey
+        // ORG_GRADLE_PROJECT_signPassword
+    }
+
+    publishing {
+        // Configure via environment variable:
+        // ORG_GRADLE_PROJECT_intellijPublishToken
+    }
 }
 
 tasks {
-    withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
-    
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("")  // No upper limit
-        
-        pluginDescription.set("""
-            <h1>LogParser Pro - Professional Log Analysis for JetBrains IDEs</h1>
-            
-            <h2>Core Features:</h2>
-            <ul>
-                <li>Syntax highlighting for JSON, plaintext, Apache/Nginx logs</li>
-                <li>Log level filtering (ERROR, WARN, INFO, DEBUG)</li>
-                <li>Keyword search and advanced filtering</li>
-                <li>Auto-detect common patterns (Spring Boot, Node.js, Python)</li>
-                <li>Stack trace folding and navigation</li>
-            </ul>
-            
-            <h2>Advanced Features:</h2>
-            <ul>
-                <li><b>Transaction/Correlation ID Tracking</b> - Cross-pod log correlation across distributed systems</li>
-                <li><b>Multi-source Aggregation</b> - Connect to Kubernetes, OpenShift, SSH, Docker, cloud storage</li>
-                <li><b>Real-time Multi-source Monitoring</b> - Live tail from multiple sources simultaneously</li>
-                <li><b>AI Pattern Recognition</b> - ML-powered anomaly detection and root cause analysis</li>
-                <li><b>Advanced Analytics</b> - Interactive dashboards, heatmaps, metrics extraction</li>
-                <li><b>Team Collaboration</b> - Shared queries, annotations, incident reports</li>
-                <li><b>High Performance</b> - Handle GB+ files with instant search and memory-efficient streaming</li>
-                <li><b>Visual Timeline</b> - Transaction flow visualization across microservices</li>
-                <li><b>Smart Suggestions</b> - Context-aware search recommendations</li>
-                <li><b>Log Playback</b> - Replay events with speed control</li>
-            </ul>
-            
-            <p>Stop jumping between kubectl logs, SSH sessions, and grep. See your entire distributed transaction in one place.</p>
-            
-            <p><a href="https://logparser.dev">Learn more</a></p>
-        """.trimIndent())
-        
-        changeNotes.set("""
-            <h3>1.0.0 - Initial Release</h3>
-            <ul>
-                <li>Free tier: Basic log viewing and filtering</li>
-                <li>Premium tier: Transaction correlation tracking (30-day trial)</li>
-                <li>Multi-source support: Kubernetes, Docker, SSH</li>
-                <li>High-performance indexing with Lucene</li>
-            </ul>
-        """.trimIndent())
-    }
-
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
-    }
-
-    publishPlugin {
-        token.set(
-            (project.findProperty("publishToken") as? String)
-                ?: System.getenv("PUBLISH_TOKEN")
-                ?: ""
-        )
-    }
-    
-    // Disable searchable options for paid plugins
-    buildSearchableOptions {
-        enabled = false
-    }
-    
     test {
         useJUnitPlatform()
     }
+
+    wrapper {
+        gradleVersion = "8.12"
+    }
+}
+
+detekt {
+    config.setFrom(files("detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.register<proguard.gradle.ProGuardTask>("obfuscate") {
+    dependsOn("jar")
+    
+    val jarFile = tasks.named<Jar>("jar").flatMap { it.archiveFile }
+    val obfuscatedJar = layout.buildDirectory.file("obfuscated/${project.name}-${project.version}-obfuscated.jar")
+    
+    injars(jarFile)
+    outjars(obfuscatedJar)
+    
+    // IntelliJ Platform classpath
+    val platformClasspath = configurations.getByName("compileClasspath").files
+    libraryjars(platformClasspath)
+    
+    // JDK modules
+    val javaHome = System.getProperty("java.home")
+    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.base.jmod")
+    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.desktop.jmod")
+    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.xml.jmod")
+    
+    keepattributes("SourceFile,LineNumberTable")
+    keepattributes("*Annotation*")
+    keepattributes("Signature")
+    keepattributes("InnerClasses")
+    keepattributes("Exceptions")
+    
+    optimizationpasses(3)
+    allowaccessmodification()
+    repackageclasses("")
+    overloadaggressively()
+    
+    keep("public class * extends com.intellij.openapi.actionSystem.AnAction { *; }")
+    keep("public class * implements com.intellij.openapi.components.PersistentStateComponent { *; }")
+    keep("public class * implements com.intellij.openapi.options.Configurable { *; }")
+    keep("public class * extends com.intellij.openapi.startup.ProjectActivity { *; }")
+    keep("public class * implements com.intellij.openapi.wm.ToolWindowFactory { *; }")
+    keep("public class * implements com.intellij.openapi.wm.StatusBarWidgetFactory { *; }")
+    keep("public class * implements com.intellij.codeInsight.daemon.LineMarkerProvider { *; }")
+    keep("public class * implements com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider { *; }")
+    keep("public class * extends com.intellij.openapi.fileEditor.FileEditorProvider { *; }")
+    keep("public class * implements com.intellij.openapi.project.ProjectManagerListener { *; }")
+    keep("public class * extends com.intellij.lang.annotation.Annotator { *; }")
+    keep("public class * implements com.intellij.psi.PsiElementFinder { *; }")
+    keep("public class * extends com.intellij.openapi.startup.StartupActivity { *; }")
+    keep("public class * implements com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener { *; }")
+    keep("public class * implements com.intellij.openapi.vcs.checkin.CheckinHandler { *; }")
+    keep("public class * extends com.intellij.openapi.vcs.checkin.CheckinHandlerFactory { *; }")
+    keep("public class * implements com.intellij.openapi.vfs.newvfs.BulkFileListener { *; }")
+    
+    keep("public class * { public static * getInstance(com.intellij.openapi.project.Project); }")
+    keep("public class * { public static * getInstance(); }")
+    
+    keep(mapOf("allowobfuscation" to false), "class ${project.group}.** { void runActivity(com.intellij.openapi.project.Project, kotlin.coroutines.Continuation); }")
+    
+    keepclassmembers("class * { ** INSTANCE; }")
+    keepclassmembers("class * extends com.intellij.openapi.components.PersistentStateComponent { *; }")
+    
+    keepattributes("RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations")
+    keep("class kotlin.Metadata { *; }")
+    
+    keepclassmembers("class * { static java.util.ResourceBundle getBundle(...); }")
+    
+    dontwarn("com.intellij.**")
+    dontwarn("org.jetbrains.**")
+    dontwarn("kotlin.**")
+    dontwarn("kotlinx.**")
+    
+    printmapping(layout.buildDirectory.file("proguard/mapping.txt"))
+    printseeds(layout.buildDirectory.file("proguard/seeds.txt"))
+    printusage(layout.buildDirectory.file("proguard/usage.txt"))
 }

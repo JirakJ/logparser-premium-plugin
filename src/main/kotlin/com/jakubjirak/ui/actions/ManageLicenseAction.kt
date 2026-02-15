@@ -1,5 +1,6 @@
 package com.jakubjirak.ui.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.DialogWrapper
@@ -11,6 +12,8 @@ import java.awt.BorderLayout
 import java.awt.GridLayout
 
 class ManageLicenseAction : AnAction() {
+    
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
     
     override fun actionPerformed(e: AnActionEvent) {
         val dialog = LicenseDialog(e.project)

@@ -1,5 +1,6 @@
 package com.jakubjirak.ui.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
@@ -7,6 +8,8 @@ import com.jakubjirak.core.LicenseManager
 import com.jakubjirak.core.PremiumFeature
 
 class TrackCorrelationAction : AnAction() {
+    
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
     
     override fun actionPerformed(e: AnActionEvent) {
         val licenseManager = LicenseManager.getInstance()

@@ -1,7 +1,6 @@
 package com.jakubjirak.logparser.premium.batch
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.nio.file.Path
@@ -37,6 +36,6 @@ class BatchProcessor(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): BatchProcessor = project.service()
+        fun getInstance(project: Project): BatchProcessor = project.getService(BatchProcessor::class.java)
     }
 }

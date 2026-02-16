@@ -1,7 +1,6 @@
 package com.jakubjirak.logparser.premium.export
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.nio.file.Path
@@ -34,6 +33,6 @@ class AdvancedExporter(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): AdvancedExporter = project.service()
+        fun getInstance(project: Project): AdvancedExporter = project.getService(AdvancedExporter::class.java)
     }
 }

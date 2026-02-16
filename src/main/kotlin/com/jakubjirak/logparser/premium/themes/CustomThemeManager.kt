@@ -37,6 +37,6 @@ class CustomThemeManager(private val project: Project) : PersistentStateComponen
     override fun loadState(state: State) { this.state = state }
     
     companion object {
-        fun getInstance(project: Project) = project.service<CustomThemeManager>()
+        fun getInstance(project: Project) = project.getService(CustomThemeManager::class.java)
     }
 }

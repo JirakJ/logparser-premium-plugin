@@ -1,7 +1,6 @@
 package com.jakubjirak.logparser.premium.comparison
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.time.Instant
@@ -48,6 +47,6 @@ class LogComparator(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): LogComparator = project.service()
+        fun getInstance(project: Project): LogComparator = project.getService(LogComparator::class.java)
     }
 }

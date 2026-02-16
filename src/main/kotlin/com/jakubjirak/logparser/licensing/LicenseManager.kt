@@ -1,7 +1,7 @@
 package com.jakubjirak.logparser.licensing
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 
 /**
  * License manager for handling freemium vs premium features
@@ -10,7 +10,7 @@ import com.intellij.openapi.components.service
 class LicenseManager {
     
     companion object {
-        fun getInstance(): LicenseManager = service()
+        fun getInstance(): LicenseManager = ApplicationManager.getApplication().getService(LicenseManager::class.java)
         
         private const val PRODUCT_CODE = "PLOGPARSERPRO"
     }

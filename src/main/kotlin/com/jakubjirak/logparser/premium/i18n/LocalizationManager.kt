@@ -1,7 +1,6 @@
 package com.jakubjirak.logparser.premium.i18n
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.util.*
@@ -30,6 +29,6 @@ class LocalizationManager(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): LocalizationManager = project.service()
+        fun getInstance(project: Project): LocalizationManager = project.getService(LocalizationManager::class.java)
     }
 }

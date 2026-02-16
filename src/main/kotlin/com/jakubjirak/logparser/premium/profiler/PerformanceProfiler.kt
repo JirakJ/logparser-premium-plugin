@@ -1,7 +1,6 @@
 package com.jakubjirak.logparser.premium.profiler
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jakubjirak.logparser.licensing.LicenseManager
 import java.time.Duration
@@ -32,6 +31,6 @@ class PerformanceProfiler(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): PerformanceProfiler = project.service()
+        fun getInstance(project: Project): PerformanceProfiler = project.getService(PerformanceProfiler::class.java)
     }
 }

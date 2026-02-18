@@ -49,6 +49,9 @@ class LogBookmarkManager(private val project: Project) : PersistentStateComponen
     override fun loadState(state: State) { this.state = state }
     
     companion object {
-        fun getInstance(project: Project): LogBookmarkManager = project.getService(LogBookmarkManager::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): LogBookmarkManager =
+            project.getService(LogBookmarkManager::class.java)
+                ?: error("Service ${LogBookmarkManager::class.java.name} not found in project $project")
     }
 }

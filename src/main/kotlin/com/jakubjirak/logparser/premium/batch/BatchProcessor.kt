@@ -36,6 +36,9 @@ class BatchProcessor(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): BatchProcessor = project.getService(BatchProcessor::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): BatchProcessor =
+            project.getService(BatchProcessor::class.java)
+                ?: error("Service ${BatchProcessor::class.java.name} not found in project $project")
     }
 }

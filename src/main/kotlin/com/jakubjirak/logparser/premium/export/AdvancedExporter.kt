@@ -33,6 +33,9 @@ class AdvancedExporter(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): AdvancedExporter = project.getService(AdvancedExporter::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): AdvancedExporter =
+            project.getService(AdvancedExporter::class.java)
+                ?: error("Service ${AdvancedExporter::class.java.name} not found in project $project")
     }
 }

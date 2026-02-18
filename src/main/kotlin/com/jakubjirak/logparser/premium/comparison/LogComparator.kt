@@ -47,6 +47,9 @@ class LogComparator(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): LogComparator = project.getService(LogComparator::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): LogComparator =
+            project.getService(LogComparator::class.java)
+                ?: error("Service ${LogComparator::class.java.name} not found in project $project")
     }
 }

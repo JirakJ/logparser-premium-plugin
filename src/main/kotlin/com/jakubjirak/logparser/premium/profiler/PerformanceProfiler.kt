@@ -31,6 +31,9 @@ class PerformanceProfiler(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): PerformanceProfiler = project.getService(PerformanceProfiler::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): PerformanceProfiler =
+            project.getService(PerformanceProfiler::class.java)
+                ?: error("Service ${PerformanceProfiler::class.java.name} not found in project $project")
     }
 }

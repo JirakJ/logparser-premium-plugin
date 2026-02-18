@@ -29,6 +29,9 @@ class LocalizationManager(private val project: Project) {
     }
     
     companion object {
-        fun getInstance(project: Project): LocalizationManager = project.getService(LocalizationManager::class.java)
+        @JvmStatic
+        fun getInstance(project: Project): LocalizationManager =
+            project.getService(LocalizationManager::class.java)
+                ?: error("Service ${LocalizationManager::class.java.name} not found in project $project")
     }
 }

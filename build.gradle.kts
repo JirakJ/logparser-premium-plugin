@@ -75,8 +75,7 @@ intellijPlatform {
     }
 
     publishing {
-        // Configure via environment variable:
-        // ORG_GRADLE_PROJECT_intellijPublishToken
+        token.set(System.getenv("PUBLISH_TOKEN"))
     }
 }
 

@@ -4,8 +4,7 @@
     <name>LogParser Pro</name>
     <vendor email="jirak@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
 
-    <description><![CDATA[
-<h2>LogParser Pro — Advanced Log Analysis and Monitoring in Your IDE</h2>
+    <description><![CDATA[<h2>LogParser Pro — Advanced Log Analysis and Monitoring in Your IDE</h2>
 
 <p>
   Stop switching between your IDE and log viewers. LogParser Pro brings professional log analysis
@@ -22,7 +21,7 @@
   <li><b>Dedicated Log Editor</b> — Custom editor for .log, .txt, and .out files with built-in tools</li>
 </ul>
 
-<h3>Real-Time Monitoring (Pro)</h3>
+<h3>Real-Time Monitoring</h3>
 <ul>
   <li><b>Kubernetes and Docker Integration</b> — Native kubectl logs and Docker API for container log tailing</li>
   <li><b>SSH Remote Tailing</b> — Connect to remote servers for live log monitoring</li>
@@ -30,18 +29,12 @@
   <li><b>Alerting Engine</b> — Real-time notifications when specific patterns appear</li>
 </ul>
 
-<h3>Distributed Systems (Pro)</h3>
+<h3>Distributed Systems</h3>
 <ul>
   <li><b>Correlation ID Tracking</b> — Follow request flows across microservices</li>
   <li><b>AI Anomaly Detection</b> — ML-based pattern detection using Isolation Forest algorithm</li>
   <li><b>Advanced Filtering</b> — Composite filters with AND/OR/NOT logic</li>
   <li><b>Team Collaboration</b> — Shared queries, annotations, and JIRA/Slack integration</li>
-</ul>
-
-<h3>Pricing</h3>
-<ul>
-  <li><b>Free:</b> Syntax highlighting, log level filtering, pattern matching, stack trace folding, export to TXT</li>
-  <li><b>Pro:</b> Correlation ID tracking, Kubernetes/Docker/SSH integration, real-time multi-source monitoring, AI anomaly detection, alerting, team collaboration</li>
 </ul>
 
 <h3>Requirements</h3>
@@ -55,8 +48,7 @@
 <ul>
   <li><a href="https://github.com/JirakJ/logparser/issues">Issue Tracker</a></li>
   <li><a href="https://github.com/JirakJ/logparser">Documentation</a></li>
-</ul>
-    ]]></description>
+</ul>]]></description>
 
     <change-notes><![CDATA[
         <h3>What's New</h3>
@@ -111,6 +103,9 @@
         
         <!-- Notification Group -->
         <notificationGroup id="LogParser Pro" displayType="BALLOON"/>
+    
+        <notificationGroup id="LogParser Pro Feedback" displayType="BALLOON"/>
+        <projectActivity implementation="com.jakubjirak.logparser.feedback.FeedbackNotifier"/>
     </extensions>
 
     <actions>

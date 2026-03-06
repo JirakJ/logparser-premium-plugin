@@ -4,8 +4,6 @@
  */
 package com.jakubjirak.logparser.premium
 
-import com.jakubjirak.core.LicenseManager
-import com.jakubjirak.core.PremiumFeature
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 
@@ -13,9 +11,9 @@ import java.util.concurrent.Executors
  * High-performance, multi-threaded log indexer for instant search across large files.
  *
  * Builds four concurrent indices (word, timestamp, log level, thread name) in parallel
- * using a fixed thread pool. Requires an active [PremiumFeature.LOG_INDEXING] license.
+ * using a fixed thread pool.
  */
-class LogIndexer(private val licenseManager: LicenseManager) {
+class LogIndexer {
 
     private val indexes = ConcurrentHashMap<String, LogIndex>()
     private val executor = Executors.newFixedThreadPool(4)
@@ -42,14 +40,8 @@ class LogIndexer(private val licenseManager: LicenseManager) {
 
     /**
      * Indexes [logs] lines under the given [fileId].
-     *
-     * @throws IllegalStateException if the user does not hold a premium license
      */
     fun indexLogs(fileId: String, logs: List<String>, onProgress: (Int) -> Unit = {}): LogIndex {
-        check(licenseManager.canUseFeature(PremiumFeature.LOG_INDEXING)) {
-            "Log indexing requires a Premium license"
-        }
-
         val wordIndex = ConcurrentHashMap<String, MutableList<Int>>()
         val timestampIndex = ConcurrentHashMap<Long, Int>()
         val levelIndex = ConcurrentHashMap<String, MutableList<Int>>()
@@ -91,9 +83,6 @@ class LogIndexer(private val licenseManager: LicenseManager) {
 
     /** Returns line numbers where all words of [query] appear (AND semantics). */
     fun searchIndexed(fileId: String, query: String): List<Int> {
-        check(licenseManager.canUseFeature(PremiumFeature.LOG_INDEXING)) {
-            "Indexed search requires a Premium license"
-        }
         val index = checkNotNull(indexes[fileId]) { "File not indexed: $fileId" }
         val searchWords = tokenize(query.lowercase())
         if (searchWords.isEmpty()) return emptyList()
@@ -104,27 +93,18 @@ class LogIndexer(private val licenseManager: LicenseManager) {
 
     /** Returns line numbers matching the given log [level]. */
     fun searchByLevel(fileId: String, level: String): List<Int> {
-        check(licenseManager.canUseFeature(PremiumFeature.LOG_INDEXING)) {
-            "Level search requires a Premium license"
-        }
         val index = checkNotNull(indexes[fileId]) { "File not indexed: $fileId" }
         return index.levelIndex[level.uppercase()] ?: emptyList()
     }
 
     /** Returns line numbers from the given [threadName]. */
     fun searchByThread(fileId: String, threadName: String): List<Int> {
-        check(licenseManager.canUseFeature(PremiumFeature.LOG_INDEXING)) {
-            "Thread search requires a Premium license"
-        }
         val index = checkNotNull(indexes[fileId]) { "File not indexed: $fileId" }
         return index.threadIndex[threadName] ?: emptyList()
     }
 
     /** Returns line numbers whose timestamps fall within [startTime]..[endTime]. */
     fun searchByTimeRange(fileId: String, startTime: Long, endTime: Long): List<Int> {
-        check(licenseManager.canUseFeature(PremiumFeature.LOG_INDEXING)) {
-            "Time range search requires a Premium license"
-        }
         val index = checkNotNull(indexes[fileId]) { "File not indexed: $fileId" }
         return index.timestampIndex.entries
             .filter { it.key in startTime..endTime }

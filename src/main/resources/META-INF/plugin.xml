@@ -1,6 +1,5 @@
 <idea-plugin>
     <id>com.jakubjirak.logparser.pro</id>
-    <product-descriptor code="PLOGPARSERPRO" release-date="20260215" release-version="20262" optional="true"/>
     <name>LogParser Pro</name>
     <vendor email="jirak@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
 
@@ -12,7 +11,7 @@
   correlation tracking, and ML-powered anomaly detection.
 </p>
 
-<h3>Free Features</h3>
+<h3>Features</h3>
 <ul>
   <li><b>Colour-Coded Log Levels</b> — ERROR, WARN, INFO, DEBUG, TRACE highlighted for instant visibility</li>
   <li><b>Dedicated Log Editor</b> — Custom editor tab for .log, .txt, and .out files</li>
@@ -21,10 +20,6 @@
   <li><b>Pattern Library</b> — Auto-detection of Spring Boot, Node.js, Python, and Java formats</li>
   <li><b>Stack Trace Folding</b> — Collapse exception stack traces for readability</li>
   <li><b>Regex Pattern Extraction</b> — Generate regex patterns from selected text</li>
-</ul>
-
-<h3>Premium Features (30-day free trial)</h3>
-<ul>
   <li><b>Correlation ID Tracking</b> — Follow request flows across microservices</li>
   <li><b>Advanced Search</b> — Regex, fuzzy, and proximity search with log indexing</li>
   <li><b>ML Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
@@ -45,15 +40,20 @@
 </ul>]]></description>
 
     <change-notes><![CDATA[
+        <h3>2026.3.2 — All Features Free</h3>
+        <ul>
+            <li><b>All Features Free</b> — Removed licensing, all features are now available to everyone at no cost</li>
+            <li><b>Simplified UI</b> — Removed trial/upgrade prompts from the tool window</li>
+        </ul>
         <h3>2026.3.1 — Production Release</h3>
         <ul>
             <li><b>Real Log Editor</b> — Full table-based log viewer with colour-coded levels, keyword search, level filtering, and status bar</li>
             <li><b>Working Settings</b> — Configurable max lines, default filter level, line numbers, and auto-refresh</li>
             <li><b>Pattern Extraction</b> — Generate regex from selected text with UUID, timestamp, and IP recognition</li>
             <li><b>Correlation Tracking</b> — Search and track correlation IDs across log entries with duration and error reporting</li>
-            <li><b>Advanced Search</b> — Regex, fuzzy (Levenshtein), and simple search modes (Premium)</li>
-            <li><b>Log Indexing</b> — Multi-threaded log file indexing for fast lookups (Premium)</li>
-            <li><b>ML Classification</b> — Statistical anomaly detection and pattern discovery (Premium)</li>
+            <li><b>Advanced Search</b> — Regex, fuzzy (Levenshtein), and simple search modes</li>
+            <li><b>Log Indexing</b> — Multi-threaded log file indexing for fast lookups</li>
+            <li><b>ML Classification</b> — Statistical anomaly detection and pattern discovery</li>
             <li><b>Feedback System</b> — Non-intrusive feedback prompt after 7 days of usage</li>
             <li><b>Code Quality</b> — 100% test coverage, full KDoc documentation, zero detekt violations</li>
         </ul>
@@ -80,9 +80,6 @@
         
         <!-- Project Service -->
         <projectService serviceImplementation="com.jakubjirak.core.LogParserService"/>
-        
-        <!-- Application Service for License Management -->
-        <applicationService serviceImplementation="com.jakubjirak.core.LicenseManager"/>
         
         <!-- Application Service for Settings -->
         <applicationService serviceImplementation="com.jakubjirak.ui.settings.LogParserSettings"/>
@@ -114,30 +111,11 @@
                     description="Open log file for analysis"
                     icon="AllIcons.Actions.MenuOpen"/>
             
-            <action id="LogParser.ConnectSource" 
-                    class="com.jakubjirak.ui.actions.ConnectSourceAction"
-                    text="Connect Log Source (Premium)" 
-                    description="Connect to Kubernetes, SSH, Docker"
-                    icon="AllIcons.Actions.Lightning"/>
-            
             <action id="LogParser.TrackCorrelation" 
                     class="com.jakubjirak.ui.actions.TrackCorrelationAction"
-                    text="Track Transaction ID (Premium)" 
+                    text="Track Transaction ID" 
                     description="Track correlation ID across sources"
                     icon="AllIcons.Actions.Find"/>
-            
-            <separator/>
-            
-            <action id="LogParser.UpgradePremium" 
-                    class="com.jakubjirak.ui.actions.UpgradePremiumAction"
-                    text="Upgrade to Premium" 
-                    description="Unlock all premium features"
-                    icon="AllIcons.Actions.Lightning"/>
-            
-            <action id="LogParser.ManageLicense" 
-                    class="com.jakubjirak.ui.actions.ManageLicenseAction"
-                    text="Manage License" 
-                    description="View and manage your license"/>
         </group>
         
         <group id="LogParser.EditorPopup" text="LogParser Pro" popup="true">
@@ -150,8 +128,8 @@
             
             <action id="LogParser.FindCorrelationId" 
                     class="com.jakubjirak.ui.actions.FindCorrelationIdAction"
-                    text="Find Correlation ID (Premium)" 
-                    description="Find this correlation ID across sources"/>
+                    text="Find Correlation ID" 
+                    description="Find correlation ID in selected text"/>
         </group>
     </actions>
 </idea-plugin>

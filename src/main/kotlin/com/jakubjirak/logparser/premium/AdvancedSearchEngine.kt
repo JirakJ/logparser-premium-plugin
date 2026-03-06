@@ -4,16 +4,12 @@
  */
 package com.jakubjirak.logparser.premium
 
-import com.jakubjirak.core.LicenseManager
-import com.jakubjirak.core.PremiumFeature
 import java.util.regex.Pattern
 
 /**
  * Advanced search engine supporting regex, simple substring, and fuzzy (Levenshtein) matching.
- *
- * All search methods require [PremiumFeature.ADVANCED_SEARCH].
  */
-class AdvancedSearchEngine(private val licenseManager: LicenseManager) {
+class AdvancedSearchEngine {
 
     /** Describes a search query with all filtering/matching options. */
     data class SearchQuery(
@@ -43,14 +39,8 @@ class AdvancedSearchEngine(private val licenseManager: LicenseManager) {
 
     /**
      * Searches [logs] according to [query] and returns matching lines with context.
-     *
-     * @throws IllegalStateException if the user does not hold a premium license
      */
     fun search(logs: List<String>, query: SearchQuery): List<SearchResult> {
-        check(licenseManager.canUseFeature(PremiumFeature.ADVANCED_SEARCH)) {
-            "Advanced search requires a Premium license"
-        }
-
         return logs.indices
             .mapNotNull { i -> matchLine(logs, i, query) }
     }

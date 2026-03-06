@@ -9,13 +9,11 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.ui.Messages
-import com.jakubjirak.core.LicenseManager
-import com.jakubjirak.core.PremiumFeature
 import com.jakubjirak.parsers.PatternLibrary
 
 /**
  * Editor popup action that extracts a correlation ID from the current selection
- * and, with a premium license, offers to search for it across the file.
+ * and displays it to the user.
  */
 class FindCorrelationIdAction : AnAction() {
 
@@ -40,18 +38,7 @@ class FindCorrelationIdAction : AnAction() {
             return
         }
 
-        val licenseManager = LicenseManager.getInstance()
-        if (!licenseManager.canUseFeature(PremiumFeature.CORRELATION_TRACKING)) {
-            Messages.showInfoMessage(
-                project,
-                "Found correlation ID: $correlationId\n\n" +
-                    "Cross-source correlation tracking is a Premium feature.\n" +
-                    "Start your FREE 30-day trial to unlock it!",
-                "Premium Feature"
-            )
-        } else {
-            Messages.showInfoMessage(project, "Correlation ID: $correlationId", "Found Correlation ID")
-        }
+        Messages.showInfoMessage(project, "Correlation ID: $correlationId", "Found Correlation ID")
     }
 
     override fun update(e: AnActionEvent) {

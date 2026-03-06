@@ -2,67 +2,53 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
-## [Unreleased]
+## [2026.3.1] - 2026-03
 
 ### Added
-- Initial project setup
-- Free tier features
-- Premium licensing system
-- Correlation ID tracking foundation
-- Kubernetes log source integration
-- Basic log parsing engine
+- **Real Log Editor** — Full table-based log viewer with colour-coded levels, keyword search, level filtering, and entry-count status bar
+- **Working Settings Panel** — Configurable max lines to parse, default filter level, line numbers, and auto-refresh (Settings → Tools → LogParser Pro)
+- **Pattern Extraction** — Generate regex from selected text with automatic UUID, timestamp, IP, and number recognition
+- **Correlation Tracking** — Search and track correlation IDs across log entries with duration and error reporting (Premium)
+- **Advanced Search** — Regex, fuzzy (Levenshtein distance), and simple substring search modes (Premium)
+- **Log Indexing** — Multi-threaded log file indexing across four dimensions (word, timestamp, level, thread) for fast lookups (Premium)
+- **ML Classification** — Keyword-based classification into six categories (database, network, security, performance, business_logic, system)
+- **Anomaly Detection** — Statistical anomaly scoring with Euclidean distance in feature space (Premium)
+- **Pattern Discovery** — Automatic grouping of similar messages with normalisation (numbers, UUIDs, IPs, emails)
+- **Feedback System** — Non-intrusive feedback prompt after 7 days of usage with dismiss option
 
-## [1.0.0-SNAPSHOT] - 2024-01-XX
+### Changed
+- Removed 39 stub/scaffold files that had no real implementation
+- Merged duplicate LicenseManager classes into a single `core.LicenseManager`
+- Replaced `Desktop.browse()` with IntelliJ `BrowserUtil.browse()` for cross-platform compatibility
+- Replaced all `throw IllegalStateException` with `check()`/`checkNotNull()` per Kotlin conventions
+- Refactored `LogEntry.matches()` to respect detekt ReturnCount limits
+- Refactored `AdvancedSearchEngine.search()` to use `mapNotNull` instead of loop with multiple `continue`
 
-### Added
-- 🆓 **Free Features:**
-  - Syntax highlighting for common log formats
-  - Log level filtering (ERROR, WARN, INFO, DEBUG)
-  - Keyword search with highlighting
-  - Auto-detect patterns (Spring Boot, Node.js, Python)
-  - Basic timestamp parsing
-  - Stack trace folding
-  - Thread name extraction
-  - Export to TXT (max 1,000 lines)
+### Fixed
+- `OpenLogFileAction` now actually opens the selected file in the editor (was a no-op)
+- `TrackCorrelationAction` now performs real correlation search instead of showing "under development"
+- `FindCorrelationIdAction` now extracts and displays correlation IDs from selected text
+- `ExtractPatternAction` now generates real regex patterns instead of showing "coming soon"
+- `LogFileEditor` now displays parsed log entries instead of "Coming Soon!" placeholder
+- `LogParserConfigurable` now has real settings instead of "Settings coming soon!" text
+- `PatternLibrary.isStackTraceLine()` no longer matches any line containing "Exception"
+- `CorrelationTracker.hasErrors` now checks `LogLevel` enum directly instead of string comparison
+- `LocalFileSource.tailFollow()` now parses new lines into `LogEntry` objects
 
-- 💎 **Premium Features:**
-  - Transaction/Correlation ID tracking
-  - Multi-source log aggregation
-  - Kubernetes pod integration (kubectl logs)
-  - Real-time live tailing
-  - Advanced pattern recognition
-  - License management system
-  - 30-day free trial
+### Removed
+- Kubernetes log source (stub)
+- Docker log source (stub)
+- SSH log source (stub)
+- Team Collaboration (stub)
+- Alerting Engine (stub)
+- REST API Server (stub)
+- Cloud Storage (stub)
+- Analytics Dashboard (stub)
+- 21 premium stub files (audit, batch, bookmarks, export, profiler, security, themes, etc.)
 
 ### Technical
-- Gradle-based build system
-- Kotlin/Java implementation
-- Apache Lucene indexing
-- RxJava reactive streams
-- IntelliJ Platform SDK 2023.2+
-
-### Plugin Structure
-- Core parsing engine
-- UI components (Tool Window, Actions, Editors)
-- License manager with trial support
-- Log source abstraction layer
-
----
-
-## Release Schedule
-
-- **Q1 2024:** MVP launch (free + premium tier)
-- **Q2 2024:** AI features + integrations
-- **Q3 2024:** VSCode port + cloud support
-- **Q4 2024:** Enterprise features
-
----
-
-### Version Format
-
-We use [Semantic Versioning](https://semver.org/):
-- **MAJOR**: Breaking changes
-- **MINOR**: New features (backward compatible)
-- **PATCH**: Bug fixes
-
-Example: `1.2.3` = Major 1, Minor 2, Patch 3
+- 146 unit tests with JUnit 5
+- Zero detekt violations (maxIssues: 0)
+- Full KDoc documentation on all public classes and methods
+- License headers on all source files
+- IntelliJ Platform SDK 2024.3, Kotlin 2.1.0, JDK 17

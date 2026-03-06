@@ -2,7 +2,7 @@
 
 Advanced log file analysis plugin for JetBrains IDEs with colour-coded log levels, filtering, pattern matching, correlation tracking, and ML-powered anomaly detection.
 
-## Free Features
+## Features
 
 - **Colour-coded log levels** — ERROR, WARN, INFO, DEBUG, TRACE highlighted for instant visibility
 - **Dedicated log editor** — Custom editor tab for `.log`, `.txt`, and `.out` files with table view
@@ -12,9 +12,6 @@ Advanced log file analysis plugin for JetBrains IDEs with colour-coded log level
 - **Stack trace folding** — Consecutive stack trace lines are folded into the parent entry
 - **Regex pattern extraction** — Generate regex patterns from selected text (UUIDs, IPs, timestamps, numbers)
 - **Configurable settings** — Max lines, default filter level, line numbers, auto-refresh
-
-## Premium Features (30-day free trial)
-
 - **Correlation ID tracking** — Track request flows across log entries by correlation/trace ID
 - **Advanced search** — Regex, fuzzy (Levenshtein distance), and proximity search
 - **Log indexing** — Multi-threaded indexing for instant search across large files
@@ -41,17 +38,14 @@ Settings → Tools → LogParser Pro
 ### Open a Log File
 Menu → LogParser Pro → **Open Log File** — select any `.log`, `.txt`, or `.out` file.
 
-### Track Correlation IDs (Premium)
+### Track Correlation IDs
 Menu → LogParser Pro → **Track Transaction ID** — enter a correlation ID to search the current file.
 
-### Find Correlation IDs (Premium)
+### Find Correlation IDs
 Select text in the editor → right-click → **Find Correlation ID** to extract and search for correlation identifiers.
 
 ### Extract Patterns
 Select text in the editor → right-click → **Extract Pattern** to generate a regex with named capture groups.
-
-### Manage License
-Menu → LogParser Pro → **Manage License** to start a trial, activate a key, or view your license status.
 
 ## Building from Source
 

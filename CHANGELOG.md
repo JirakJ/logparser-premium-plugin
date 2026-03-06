@@ -2,17 +2,27 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.2] - 2026-03
+
+### Changed
+- **All Features Free** — Removed all licensing, premium gating, and trial logic; every feature is now available to all users at no cost
+- Removed LicenseManager, ManageLicenseAction, UpgradePremiumAction, and ConnectSourceAction
+- Removed product-descriptor from plugin.xml
+- Simplified tool window UI (removed trial/upgrade buttons and license status)
+- Correlation tracking and advanced search no longer require a license
+- Removed PREMIUM_FEATURES.md, PRICING.md, and MARKETPLACE_LISTING.md
+
 ## [2026.3.1] - 2026-03
 
 ### Added
 - **Real Log Editor** — Full table-based log viewer with colour-coded levels, keyword search, level filtering, and entry-count status bar
 - **Working Settings Panel** — Configurable max lines to parse, default filter level, line numbers, and auto-refresh (Settings → Tools → LogParser Pro)
 - **Pattern Extraction** — Generate regex from selected text with automatic UUID, timestamp, IP, and number recognition
-- **Correlation Tracking** — Search and track correlation IDs across log entries with duration and error reporting (Premium)
-- **Advanced Search** — Regex, fuzzy (Levenshtein distance), and simple substring search modes (Premium)
-- **Log Indexing** — Multi-threaded log file indexing across four dimensions (word, timestamp, level, thread) for fast lookups (Premium)
+- **Correlation Tracking** — Search and track correlation IDs across log entries with duration and error reporting
+- **Advanced Search** — Regex, fuzzy (Levenshtein distance), and simple substring search modes
+- **Log Indexing** — Multi-threaded log file indexing across four dimensions (word, timestamp, level, thread) for fast lookups
 - **ML Classification** — Keyword-based classification into six categories (database, network, security, performance, business_logic, system)
-- **Anomaly Detection** — Statistical anomaly scoring with Euclidean distance in feature space (Premium)
+- **Anomaly Detection** — Statistical anomaly scoring with Euclidean distance in feature space
 - **Pattern Discovery** — Automatic grouping of similar messages with normalisation (numbers, UUIDs, IPs, emails)
 - **Feedback System** — Non-intrusive feedback prompt after 7 days of usage with dismiss option
 

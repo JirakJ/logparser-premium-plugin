@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 Jakub Jirák. All rights reserved.
+ * Licensed under the terms of the JetBrains Marketplace EULA.
+ */
 package com.jakubjirak.ui.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -9,55 +13,47 @@ import com.jakubjirak.core.LicenseManager
 import com.jakubjirak.core.PremiumFeature
 import com.jakubjirak.parsers.PatternLibrary
 
+/**
+ * Editor popup action that extracts a correlation ID from the current selection
+ * and, with a premium license, offers to search for it across the file.
+ */
 class FindCorrelationIdAction : AnAction() {
-    
+
     private val patternLibrary = PatternLibrary()
-    
+
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-    
+
     override fun actionPerformed(e: AnActionEvent) {
-        val licenseManager = LicenseManager.getInstance()
+        val project = e.project ?: return
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
         val selectedText = editor.selectionModel.selectedText ?: return
-        
+
         val correlationId = patternLibrary.extractCorrelationId(selectedText)
-        
+
         if (correlationId == null) {
             Messages.showWarningDialog(
-                e.project,
-                """No correlation ID found in selected text.
-                
-                Supported formats:
-                • X-Request-ID
-                • X-Correlation-ID
-                • traceId
-                • UUID""".trimMargin(),
+                project,
+                "No correlation ID found in selected text.\n\n" +
+                    "Supported formats: X-Request-ID, X-Correlation-ID, traceId, UUID",
                 "No Correlation ID"
             )
             return
         }
-        
+
+        val licenseManager = LicenseManager.getInstance()
         if (!licenseManager.canUseFeature(PremiumFeature.CORRELATION_TRACKING)) {
             Messages.showInfoMessage(
-                e.project,
-                """Found correlation ID: $correlationId
-                
-                Cross-source correlation tracking is a Premium feature!
-                Start your FREE 30-day trial to:
-                • Track this ID across all your services
-                • See the complete transaction timeline
-                • Identify bottlenecks and errors""".trimMargin(),
+                project,
+                "Found correlation ID: $correlationId\n\n" +
+                    "Cross-source correlation tracking is a Premium feature.\n" +
+                    "Start your FREE 30-day trial to unlock it!",
                 "Premium Feature"
             )
         } else {
-            Messages.showInfoMessage(
-                e.project,
-                "Searching for correlation ID: $correlationId\n\nThis feature is under development.",
-                "Finding Correlation ID"
-            )
+            Messages.showInfoMessage(project, "Correlation ID: $correlationId", "Found Correlation ID")
         }
     }
-    
+
     override fun update(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR)
         e.presentation.isEnabled = editor != null && !editor.selectionModel.selectedText.isNullOrEmpty()

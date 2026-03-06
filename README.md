@@ -1,26 +1,26 @@
 # LogParser Pro
 
-Advanced log file analysis and monitoring plugin for JetBrains IDEs featuring syntax highlighting, real-time log tailing, pattern matching, correlation tracking, and AI-powered anomaly detection for distributed systems.
+Advanced log file analysis plugin for JetBrains IDEs with colour-coded log levels, filtering, pattern matching, correlation tracking, and ML-powered anomaly detection.
 
-## Features
+## Free Features
 
-- **Syntax highlighting** — color-coded support for JSON, plaintext, Apache/Nginx, and common log formats
-- **Log level filtering** — filter by ERROR, WARN, INFO, DEBUG with color coding
-- **Keyword search** — fast string matching with result highlighting
-- **Auto-detect patterns** — recognizes Spring Boot, Node.js, Python, and Java log formats
-- **Stack trace folding** — collapse exception traces for readability
-- **Custom log file editor** — dedicated editor for `.log`, `.txt`, and `.out` files
-- **Export to TXT** — save filtered results
-- **Transaction/Correlation ID tracking** — cross-pod log correlation across microservices (Premium)
-- **Kubernetes & Docker integration** — native `kubectl logs` and Docker API support (Premium)
-- **SSH remote log tailing** — connect to remote servers (Premium)
-- **Real-time multi-source monitoring** — live tail 10+ sources simultaneously with RxJava streaming (Premium)
-- **AI-powered anomaly detection** — ML-based pattern detection using Isolation Forest algorithm (Premium)
-- **Advanced analytics & visualization** — dashboards, heatmaps, and metrics (Premium)
-- **Advanced filtering engine** — composite filters with AND/OR/NOT logic (Premium)
-- **Alerting engine** — real-time alerts based on configurable patterns (Premium)
-- **Team collaboration** — shared queries and annotations (Premium)
-- **Integration ecosystem** — JIRA, Slack, and REST API access (Premium)
+- **Colour-coded log levels** — ERROR, WARN, INFO, DEBUG, TRACE highlighted for instant visibility
+- **Dedicated log editor** — Custom editor tab for `.log`, `.txt`, and `.out` files with table view
+- **Log level filtering** — Filter entries by severity with a single click
+- **Keyword search** — Full-text search across log entries
+- **Pattern library** — Auto-detection of Spring Boot, Node.js, Python, and Java formats
+- **Stack trace folding** — Consecutive stack trace lines are folded into the parent entry
+- **Regex pattern extraction** — Generate regex patterns from selected text (UUIDs, IPs, timestamps, numbers)
+- **Configurable settings** — Max lines, default filter level, line numbers, auto-refresh
+
+## Premium Features (30-day free trial)
+
+- **Correlation ID tracking** — Track request flows across log entries by correlation/trace ID
+- **Advanced search** — Regex, fuzzy (Levenshtein distance), and proximity search
+- **Log indexing** — Multi-threaded indexing for instant search across large files
+- **ML log classification** — Categorise entries into database, network, security, performance, business logic, and system
+- **Anomaly detection** — Statistical anomaly scoring based on feature-space distance
+- **Pattern discovery** — Automatic grouping of similar messages with normalisation
 
 ## Installation
 
@@ -29,34 +29,40 @@ Advanced log file analysis and monitoring plugin for JetBrains IDEs featuring sy
 
 ## Requirements
 
-- IntelliJ IDEA 2023.2+ (build 232+)
-- Any JetBrains IDE (IntelliJ, WebStorm, PyCharm, etc.)
+- IntelliJ IDEA 2023.2+ (build 232+) or any JetBrains IDE
 - JDK 17+
 
 ## Configuration
 
 Settings → Tools → LogParser Pro
 
-Configure log format detection, filtering preferences, and integration connections.
-
 ## Usage
 
 ### Open a Log File
-Menu → LogParser Pro → **Open Log File** — select any `.log`, `.txt`, or `.out` file to open it in the dedicated log editor with syntax highlighting and filtering.
+Menu → LogParser Pro → **Open Log File** — select any `.log`, `.txt`, or `.out` file.
 
 ### Track Correlation IDs (Premium)
-Select a correlation ID in the editor → right-click → **Find Correlation ID** to view a unified transaction timeline across all connected log sources.
+Menu → LogParser Pro → **Track Transaction ID** — enter a correlation ID to search the current file.
 
-### Connect Log Sources (Premium)
-Menu → LogParser Pro → **Connect Log Source** to add Kubernetes pods, Docker containers, or SSH remote servers for real-time log tailing.
+### Find Correlation IDs (Premium)
+Select text in the editor → right-click → **Find Correlation ID** to extract and search for correlation identifiers.
 
 ### Extract Patterns
-Right-click in the log editor → **Extract Pattern** to save reusable pattern definitions for common log formats.
+Select text in the editor → right-click → **Extract Pattern** to generate a regex with named capture groups.
+
+### Manage License
+Menu → LogParser Pro → **Manage License** to start a trial, activate a key, or view your license status.
 
 ## Building from Source
 
 ```bash
 ./gradlew buildPlugin
+```
+
+## Testing
+
+```bash
+./gradlew test
 ```
 
 ## License

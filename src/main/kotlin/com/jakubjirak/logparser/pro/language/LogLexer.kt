@@ -29,6 +29,7 @@ class LogLexer : LexerBase() {
         this.startOffset = startOffset
         this.endOffset = endOffset
         this.currentOffset = startOffset
+        this.tokenEnd = startOffset
         advance()
     }
 
@@ -41,6 +42,7 @@ class LogLexer : LexerBase() {
     override fun getTokenEnd(): Int = tokenEnd
 
     override fun advance() {
+        currentOffset = tokenEnd
         if (currentOffset >= endOffset) {
             currentTokenType = null
             return
@@ -50,7 +52,6 @@ class LogLexer : LexerBase() {
         val line = buffer.subSequence(currentOffset, lineEnd).toString()
 
         currentTokenType = classifyLine(line)
-        currentOffset = tokenEnd
         tokenEnd = lineEnd
     }
 

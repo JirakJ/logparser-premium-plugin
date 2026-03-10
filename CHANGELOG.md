@@ -2,6 +2,11 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.8] - 2026-03
+
+### Fixed
+- **Critical: LogLexer infinite loop** — Fixed `advance()` method that produced zero-length tokens due to wrong assignment order, causing the IDE to fail when opening `.log` and `.out` files
+
 ## [2026.3.7] - 2026-03
 
 ### Changed

@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) 2026 Jakub Jirák. All rights reserved.
+ * Licensed under the terms of the JetBrains Marketplace EULA.
+ */
+package com.jakubjirak.logparser.pro.actions
+
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.ui.Messages
+import com.jakubjirak.logparser.pro.core.LogParserService
+import com.jakubjirak.logparser.pro.correlation.CorrelationTracker
+import com.jakubjirak.logparser.pro.correlation.SourceType
+import java.io.File
+
+/**
+ * Prompts the user for a correlation ID and searches the currently open log file.
+ *
+ * Displays the number of matching entries, duration, and error status.
+ */
+class TrackCorrelationAction : AnAction() {
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
+
+        val correlationId = Messages.showInputDialog(
+            project,
+            "Enter correlation ID to track:",
+            "Track Transaction",
+            Messages.getQuestionIcon()
+        )
+
+        if (correlationId.isNullOrBlank()) return
+
+        val service = LogParserService.getInstance(project)
+        val tracker = CorrelationTracker()
+
+        val editor = com.intellij.openapi.fileEditor.FileEditorManager.getInstance(project)
+        val currentFile = editor.selectedFiles.firstOrNull() ?: return
+        val ioFile = File(currentFile.path)
+        if (!ioFile.exists()) return
+
+        val parser = service.parseLogFile(ioFile)
+        val entries = parser.searchCorrelationId(correlationId)
+
+        if (entries.isEmpty()) {
+            Messages.showInfoMessage(
+                project,
+                "No entries found for correlation ID: $correlationId",
+                "Tracking Results"
+            )
+        } else {
+            entries.forEach { tracker.addEntry(correlationId, it, ioFile.name, SourceType.LOCAL_FILE) }
+            val flow = tracker.getTransaction(correlationId)
+            val durationStr = flow?.duration?.let { "${it}ms" } ?: "unknown"
+            Messages.showInfoMessage(
+                project,
+                "Found ${entries.size} entries for ID: $correlationId\n" +
+                    "Duration: $durationStr\n" +
+                    "Has errors: ${flow?.hasErrors ?: false}",
+                "Tracking Results"
+            )
+        }
+    }
+}

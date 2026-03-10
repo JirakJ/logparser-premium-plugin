@@ -14,9 +14,9 @@
 <h3>Features</h3>
 <ul>
   <li><b>Colour-Coded Log Levels</b> — ERROR, WARN, INFO, DEBUG, TRACE highlighted for instant visibility</li>
-  <li><b>Dedicated Log Editor</b> — Custom editor tab for .log, .txt, and .out files</li>
-  <li><b>Log Level Filtering</b> — Filter entries by severity with a single click</li>
-  <li><b>Keyword Search</b> — Full-text search across log entries</li>
+  <li><b>Dedicated Log Editor</b> — Custom editor tab for .log and .out files with table view</li>
+  <li><b>Log Level Filtering</b> — Toggle buttons to filter by severity</li>
+  <li><b>Keyword Search</b> — Live filtering across log entries</li>
   <li><b>Pattern Library</b> — Auto-detection of Spring Boot, Node.js, Python, and Java formats</li>
   <li><b>Stack Trace Folding</b> — Collapse exception stack traces for readability</li>
   <li><b>Regex Pattern Extraction</b> — Generate regex patterns from selected text</li>
@@ -25,6 +25,9 @@
   <li><b>ML Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
   <li><b>Log Indexing</b> — Fast indexed search across large log files</li>
   <li><b>ML Log Classification</b> — Automatic categorisation of log entries</li>
+  <li><b>Statistics Dashboard</b> — Level distribution, top loggers, entries over time</li>
+  <li><b>Export</b> — Export filtered results to CSV, JSON, or plain text</li>
+  <li><b>Rich Settings</b> — Configurable via Settings → Tools → LogParser Pro</li>
 </ul>
 
 <h3>Requirements</h3>
@@ -40,95 +43,106 @@
 </ul>]]></description>
 
     <change-notes><![CDATA[
-        <h3>2026.3.2 — All Features Free</h3>
+        <h3>2026.3.7 — Complete Rewrite</h3>
         <ul>
-            <li><b>All Features Free</b> — Removed licensing, all features are now available to everyone at no cost</li>
-            <li><b>Simplified UI</b> — Removed trial/upgrade prompts from the tool window</li>
-        </ul>
-        <h3>2026.3.1 — Production Release</h3>
-        <ul>
-            <li><b>Real Log Editor</b> — Full table-based log viewer with colour-coded levels, keyword search, level filtering, and status bar</li>
-            <li><b>Working Settings</b> — Configurable max lines, default filter level, line numbers, and auto-refresh</li>
-            <li><b>Pattern Extraction</b> — Generate regex from selected text with UUID, timestamp, and IP recognition</li>
-            <li><b>Correlation Tracking</b> — Search and track correlation IDs across log entries with duration and error reporting</li>
-            <li><b>Advanced Search</b> — Regex, fuzzy (Levenshtein), and simple search modes</li>
-            <li><b>Log Indexing</b> — Multi-threaded log file indexing for fast lookups</li>
-            <li><b>ML Classification</b> — Statistical anomaly detection and pattern discovery</li>
-            <li><b>Feedback System</b> — Non-intrusive feedback prompt after 7 days of usage</li>
-            <li><b>Code Quality</b> — 100% test coverage, full KDoc documentation, zero detekt violations</li>
+            <li><b>LanguageFileType</b> — Proper LogLanguage + LanguageFileType + ParserDefinition integration</li>
+            <li><b>Syntax Highlighting</b> — Colour-coded log levels in the text editor</li>
+            <li><b>Tools Menu</b> — Actions now under Tools → LogParser Pro (not main menu)</li>
+            <li><b>Rich Settings</b> — 10 configurable options: max lines, font size, date format, export format, theme colors, and more</li>
+            <li><b>Enhanced Editor</b> — 6-column table (Line, Timestamp, Level, Thread, Logger, Message) with level toggle buttons</li>
+            <li><b>Export</b> — Export filtered entries to CSV, JSON, or plain text</li>
+            <li><b>Context Menu</b> — Copy Line, Copy Message, Track Correlation ID, Go to Line</li>
+            <li><b>Tool Window Tabs</b> — Log Viewer, Search, Correlation, and Statistics tabs</li>
+            <li><b>Statistics Dashboard</b> — Level distribution bar chart, top loggers, entries per hour</li>
+            <li><b>Analyze Log Action</b> — One-click full analysis report</li>
+            <li><b>Package Consolidation</b> — All code under com.jakubjirak.logparser.pro</li>
+            <li><b>No .txt Hijacking</b> — Editor only accepts .log and .out files</li>
         </ul>
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends optional="true" config-file="kubernetes-support.xml">com.intellij.kubernetes</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- File Type -->
-        <fileType 
-            name="Log File" 
-            implementationClass="com.jakubjirak.core.LogFileType"
-            fieldName="INSTANCE" 
-            language="Log" 
-            extensions="log;txt;out"/>
-        
+        <!-- File Type (LanguageFileType with LogLanguage) -->
+        <fileType
+            name="Log File"
+            implementationClass="com.jakubjirak.logparser.pro.language.LogFileType"
+            fieldName="INSTANCE"
+            language="Log"
+            extensions="log;out"/>
+
+        <!-- Language support -->
+        <lang.parserDefinition
+            language="Log"
+            implementationClass="com.jakubjirak.logparser.pro.language.LogParserDefinition"/>
+
+        <lang.syntaxHighlighterFactory
+            language="Log"
+            implementationClass="com.jakubjirak.logparser.pro.language.LogSyntaxHighlighterFactory"/>
+
         <!-- Tool Window -->
-        <toolWindow 
-            id="LogParser Pro" 
-            anchor="bottom" 
+        <toolWindow
+            id="LogParser Pro"
+            anchor="bottom"
             icon="/icons/logparser.svg"
-            factoryClass="com.jakubjirak.ui.LogParserToolWindowFactory"/>
-        
+            factoryClass="com.jakubjirak.logparser.pro.toolwindow.LogParserToolWindowFactory"/>
+
         <!-- Project Service -->
-        <projectService serviceImplementation="com.jakubjirak.core.LogParserService"/>
-        
+        <projectService serviceImplementation="com.jakubjirak.logparser.pro.core.LogParserService"/>
+
         <!-- Application Service for Settings -->
-        <applicationService serviceImplementation="com.jakubjirak.ui.settings.LogParserSettings"/>
-        
-        <!-- Settings -->
-        <applicationConfigurable 
-            parentId="tools" 
-            implementation="com.jakubjirak.ui.settings.LogParserConfigurable"
-            id="com.jakubjirak.logparser.settings" 
+        <applicationService serviceImplementation="com.jakubjirak.logparser.pro.settings.LogParserSettings"/>
+
+        <!-- Settings Panel -->
+        <applicationConfigurable
+            parentId="tools"
+            implementation="com.jakubjirak.logparser.pro.settings.LogParserConfigurable"
+            id="com.jakubjirak.logparser.settings"
             displayName="LogParser Pro"/>
-        
+
         <!-- File Editor Provider -->
-        <fileEditorProvider implementation="com.jakubjirak.ui.editor.LogFileEditorProvider"/>
-        
-        <!-- Notification Group -->
+        <fileEditorProvider implementation="com.jakubjirak.logparser.pro.editor.LogFileEditorProvider"/>
+
+        <!-- Notification Groups -->
         <notificationGroup id="LogParser Pro" displayType="BALLOON"/>
-    
         <notificationGroup id="LogParser Pro Feedback" displayType="BALLOON"/>
-        <projectActivity implementation="com.jakubjirak.logparser.feedback.FeedbackNotifier"/>
+        <projectActivity implementation="com.jakubjirak.logparser.pro.feedback.FeedbackNotifier"/>
     </extensions>
 
     <actions>
-        <group id="LogParser.MainMenu" text="LogParser Pro" popup="true">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            
-            <action id="LogParser.OpenFile" 
-                    class="com.jakubjirak.ui.actions.OpenLogFileAction"
-                    text="Open Log File" 
+        <group id="LogParser.ToolsMenu" text="LogParser Pro" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+
+            <action id="LogParser.OpenFile"
+                    class="com.jakubjirak.logparser.pro.actions.OpenLogFileAction"
+                    text="Open Log File"
                     description="Open log file for analysis"
                     icon="AllIcons.Actions.MenuOpen"/>
-            
-            <action id="LogParser.TrackCorrelation" 
-                    class="com.jakubjirak.ui.actions.TrackCorrelationAction"
-                    text="Track Transaction ID" 
+
+            <action id="LogParser.TrackCorrelation"
+                    class="com.jakubjirak.logparser.pro.actions.TrackCorrelationAction"
+                    text="Track Transaction ID"
                     description="Track correlation ID across sources"
                     icon="AllIcons.Actions.Find"/>
+
+            <action id="LogParser.AnalyzeLog"
+                    class="com.jakubjirak.logparser.pro.actions.AnalyzeLogAction"
+                    text="Analyze Log"
+                    description="Run full analysis on current log file"
+                    icon="AllIcons.Actions.ShowAsTree"/>
         </group>
-        
+
         <group id="LogParser.EditorPopup" text="LogParser Pro" popup="true">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            
-            <action id="LogParser.ExtractPattern" 
-                    class="com.jakubjirak.ui.actions.ExtractPatternAction"
-                    text="Extract Pattern" 
+
+            <action id="LogParser.ExtractPattern"
+                    class="com.jakubjirak.logparser.pro.actions.ExtractPatternAction"
+                    text="Extract Pattern"
                     description="Extract pattern from selected text"/>
-            
-            <action id="LogParser.FindCorrelationId" 
-                    class="com.jakubjirak.ui.actions.FindCorrelationIdAction"
-                    text="Find Correlation ID" 
+
+            <action id="LogParser.FindCorrelationId"
+                    class="com.jakubjirak.logparser.pro.actions.FindCorrelationIdAction"
+                    text="Find Correlation ID"
                     description="Find correlation ID in selected text"/>
         </group>
     </actions>

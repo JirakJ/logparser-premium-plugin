@@ -2,6 +2,13 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.9] - 2026-03
+
+### Fixed
+- **Plugin verification failure** — Removed bundled `kotlin-stdlib` and `annotations` that conflicted with IDE-provided versions, causing "archive cannot be extracted" on IntelliJ 2023.2
+- **Missing toolWindow icon** — Replaced nonexistent `/icons/logparser.svg` with built-in `AllIcons.FileTypes.Text`
+- **Plugin verifier configuration** — Now verifies against IntelliJ 2023.2 and 2024.3 explicitly
+
 ## [2026.3.8] - 2026-03
 
 ### Fixed

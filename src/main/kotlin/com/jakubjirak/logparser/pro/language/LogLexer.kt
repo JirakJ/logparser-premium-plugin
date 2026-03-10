@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2026 Jakub Jirák. All rights reserved.
+ * Licensed under the terms of the JetBrains Marketplace EULA.
+ */
+package com.jakubjirak.logparser.pro.language
+
+import com.intellij.lexer.LexerBase
+import com.intellij.psi.tree.IElementType
+
+/**
+ * Line-oriented lexer for log files.
+ *
+ * Processes one line at a time. Each line is classified as a single token
+ * based on its dominant content: timestamp, log level, stack trace, or plain text.
+ * This keeps the lexer simple and fast while providing enough granularity
+ * for meaningful syntax highlighting.
+ */
+class LogLexer : LexerBase() {
+
+    private var buffer: CharSequence = ""
+    private var startOffset = 0
+    private var endOffset = 0
+    private var currentOffset = 0
+    private var tokenEnd = 0
+    private var currentTokenType: IElementType? = null
+
+    override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+        this.buffer = buffer
+        this.startOffset = startOffset
+        this.endOffset = endOffset
+        this.currentOffset = startOffset
+        advance()
+    }
+
+    override fun getState(): Int = 0
+
+    override fun getTokenType(): IElementType? = currentTokenType
+
+    override fun getTokenStart(): Int = currentOffset
+
+    override fun getTokenEnd(): Int = tokenEnd
+
+    override fun advance() {
+        if (currentOffset >= endOffset) {
+            currentTokenType = null
+            return
+        }
+
+        val lineEnd = findLineEnd(currentOffset)
+        val line = buffer.subSequence(currentOffset, lineEnd).toString()
+
+        currentTokenType = classifyLine(line)
+        currentOffset = tokenEnd
+        tokenEnd = lineEnd
+    }
+
+    override fun getBufferSequence(): CharSequence = buffer
+
+    override fun getBufferEnd(): Int = endOffset
+
+    private fun findLineEnd(from: Int): Int {
+        var pos = from
+        while (pos < endOffset && buffer[pos] != '\n') pos++
+        if (pos < endOffset) pos++ // include newline
+        return pos
+    }
+
+    companion object {
+
+        private val TIMESTAMP_PATTERN = Regex(
+            """^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}"""
+        )
+        private val ERROR_PATTERN = Regex("""\b(ERROR|FATAL|SEVERE)\b""", RegexOption.IGNORE_CASE)
+        private val WARN_PATTERN = Regex("""\b(WARN|WARNING)\b""", RegexOption.IGNORE_CASE)
+        private val INFO_PATTERN = Regex("""\bINFO\b""", RegexOption.IGNORE_CASE)
+        private val DEBUG_PATTERN = Regex("""\bDEBUG\b""", RegexOption.IGNORE_CASE)
+        private val TRACE_PATTERN = Regex("""\bTRACE\b""", RegexOption.IGNORE_CASE)
+
+        /** Classifies a single line into the most significant [IElementType]. */
+        internal fun classifyLine(line: String): IElementType {
+            val trimmed = line.trimStart()
+            if (trimmed.startsWith("at ") || trimmed.startsWith("Caused by:") || trimmed.startsWith("... ")) {
+                return LogTokenTypes.STACK_TRACE
+            }
+            if (ERROR_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_ERROR
+            if (WARN_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_WARN
+            if (INFO_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_INFO
+            if (DEBUG_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_DEBUG
+            if (TRACE_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_TRACE
+            if (TIMESTAMP_PATTERN.containsMatchIn(line)) return LogTokenTypes.TIMESTAMP
+            return LogTokenTypes.TEXT
+        }
+    }
+}

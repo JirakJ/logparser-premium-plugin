@@ -2,6 +2,30 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.7] - 2026-03
+
+### Changed
+- **Complete Rewrite** — All source code rewritten under `com.jakubjirak.logparser.pro` package
+- **LanguageFileType** — Proper `LogLanguage` + `LanguageFileType` + `LogParserDefinition` integration
+- **Syntax Highlighting** — Full colour-coded log levels in the text editor via `LogSyntaxHighlighter`
+- **Tools Menu** — Actions moved from main menu to **Tools → LogParser Pro**
+- **Rich Settings** — 10 configurable options: max lines, font size, date format, export format, theme colours, correlation patterns, and more
+- **Enhanced Editor** — 6-column table (Line, Timestamp, Level, Thread, Logger, Message) with level toggle buttons
+- **Export** — Export filtered entries to CSV, JSON, or plain text
+- **Context Menu** — Right-click: Copy Line, Copy Message, Track Correlation ID, Go to Line
+- **Tool Window Tabs** — Log Viewer, Search, Correlation, and Statistics tabs
+- **Statistics Dashboard** — Level distribution bar chart, top 10 loggers, entries per hour
+- **Analyze Log Action** — One-click full analysis report with anomaly detection
+- **File Type** — Only accepts `.log` and `.out` files (removed `.txt` to avoid hijacking text files)
+- **No Kubernetes Dependency** — Removed optional kubernetes-support.xml
+
+### Technical
+- 8 test classes with 100+ tests (JUnit 5)
+- Full KDoc documentation on all public classes and methods
+- License headers on all source files
+- Package: `com.jakubjirak.logparser.pro`
+- IntelliJ Platform SDK 2024.3, Kotlin 2.1.0, JDK 17
+
 ## [2026.3.2] - 2026-03
 
 ### Changed

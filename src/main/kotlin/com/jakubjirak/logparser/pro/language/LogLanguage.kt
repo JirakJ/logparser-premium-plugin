@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Jakub Jirák. All rights reserved.
+ * Licensed under the terms of the JetBrains Marketplace EULA.
+ */
+package com.jakubjirak.logparser.pro.language
+
+import com.intellij.lang.Language
+
+/**
+ * Singleton language definition for log files.
+ *
+ * Registers with the IntelliJ Platform so that file types, parsers,
+ * and syntax highlighters can bind to the `"Log"` language ID.
+ */
+object LogLanguage : Language("Log") {
+
+    /** Prevents serialisation warnings. */
+    private fun readResolve(): Any = LogLanguage
+
+    override fun getDisplayName(): String = "Log"
+}

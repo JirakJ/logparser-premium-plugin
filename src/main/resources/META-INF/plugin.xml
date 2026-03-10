@@ -84,7 +84,7 @@
         <toolWindow
             id="LogParser Pro"
             anchor="bottom"
-            icon="/icons/logparser.svg"
+            icon="AllIcons.FileTypes.Text"
             factoryClass="com.jakubjirak.logparser.pro.toolwindow.LogParserToolWindowFactory"/>
 
         <!-- Project Service -->

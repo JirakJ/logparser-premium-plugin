@@ -43,6 +43,11 @@
 </ul>]]></description>
 
     <change-notes><![CDATA[
+        <h3>2026.3.10 — Freemium Model</h3>
+        <ul>
+            <li><b>Freemium licensing</b> — Added product-descriptor for JetBrains Marketplace freemium model (code: PLOGPARSERPRO)</li>
+        </ul>
+
         <h3>2026.3.7 — Complete Rewrite</h3>
         <ul>
             <li><b>LanguageFileType</b> — Proper LogLanguage + LanguageFileType + ParserDefinition integration</li>
@@ -61,6 +66,8 @@
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
+
+    <product-descriptor code="PLOGPARSERPRO" release-date="20260327" release-version="20263" optional="true"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- File Type (LanguageFileType with LogLanguage) -->

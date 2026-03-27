@@ -2,6 +2,11 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.10] - 2026-03-27
+
+### Added
+- **Freemium licensing** — Added `product-descriptor` for JetBrains Marketplace freemium model (code: `PLOGPARSERPRO`)
+
 ## [2026.3.9] - 2026-03
 
 ### Fixed

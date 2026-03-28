@@ -4,9 +4,9 @@
  */
 package com.jakubjirak.logparser.pro.toolwindow
 
-import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBLabel
@@ -19,15 +19,19 @@ import javax.swing.*
 /**
  * Log Viewer tab in the tool window.
  *
- * Provides quick file open and a list of recently opened log files.
+ * Automatically tracks `.log` and `.out` files opened in the IDE editor
+ * and displays them in a list for quick navigation.
  */
 class LogViewerPanel(private val project: Project) {
 
     private val panel = JPanel(BorderLayout())
-    private val recentFiles = DefaultListModel<String>()
+    private val logFilesModel = DefaultListModel<String>()
+    private val supportedExtensions = setOf("log", "out")
 
     init {
         setupUI()
+        scanOpenFiles()
+        subscribeToEditorEvents()
     }
 
     private fun setupUI() {
@@ -36,52 +40,60 @@ class LogViewerPanel(private val project: Project) {
         topPanel.border = JBUI.Borders.empty(12)
 
         topPanel.add(JBLabel("<html><h2>LogParser Pro — Log Viewer</h2></html>"))
-        topPanel.add(Box.createVerticalStrut(8))
-
-        val buttonPanel = JPanel()
-        buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.X_AXIS)
-        val openButton = JButton("Open Log File")
-        openButton.addActionListener { openLogFile() }
-        buttonPanel.add(openButton)
-        buttonPanel.add(Box.createHorizontalGlue())
-        topPanel.add(buttonPanel)
-
+        topPanel.add(Box.createVerticalStrut(4))
+        topPanel.add(JBLabel("Open log files in the editor — they appear here automatically."))
         topPanel.add(Box.createVerticalStrut(12))
-        topPanel.add(JBLabel("Recent files:"))
+        topPanel.add(JBLabel("Open log files:"))
 
         panel.add(topPanel, BorderLayout.NORTH)
 
-        val recentList = JBList(recentFiles)
-        recentList.addListSelectionListener { event ->
+        val fileList = JBList(logFilesModel)
+        fileList.addListSelectionListener { event ->
             if (!event.valueIsAdjusting) {
-                val selected = recentList.selectedValue
-                if (selected != null) {
-                    val file = com.intellij.openapi.vfs.LocalFileSystem.getInstance().findFileByPath(selected)
-                    if (file != null) {
-                        FileEditorManager.getInstance(project).openFile(file, true)
+                val selected = fileList.selectedValue ?: return@addListSelectionListener
+                val file = com.intellij.openapi.vfs.LocalFileSystem.getInstance().findFileByPath(selected)
+                if (file != null) {
+                    FileEditorManager.getInstance(project).openFile(file, true)
+                }
+            }
+        }
+        panel.add(JBScrollPane(fileList), BorderLayout.CENTER)
+    }
+
+    private fun scanOpenFiles() {
+        FileEditorManager.getInstance(project).openFiles
+            .filter { it.extension in supportedExtensions }
+            .forEach { addFile(it) }
+    }
+
+    private fun subscribeToEditorEvents() {
+        project.messageBus.connect().subscribe(
+            FileEditorManagerListener.FILE_EDITOR_MANAGER,
+            object : FileEditorManagerListener {
+                override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+                    if (file.extension in supportedExtensions) {
+                        addFile(file)
+                    }
+                }
+
+                override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
+                    if (file.extension in supportedExtensions) {
+                        removeFile(file)
                     }
                 }
             }
-        }
-        panel.add(JBScrollPane(recentList), BorderLayout.CENTER)
+        )
     }
 
-    private fun openLogFile() {
-        val descriptor = FileChooserDescriptor(true, false, false, false, false, false).apply {
-            title = "Select Log File"
-            description = "Select a log file to analyse"
-            withFileFilter { file: VirtualFile -> file.extension in setOf("log", "out") }
+    private fun addFile(file: VirtualFile) {
+        val path = file.path
+        if (!logFilesModel.contains(path)) {
+            logFilesModel.addElement(path)
         }
+    }
 
-        FileChooser.chooseFiles(descriptor, project, null) { files ->
-            files.firstOrNull()?.let { file ->
-                FileEditorManager.getInstance(project).openFile(file, true)
-                val path = file.path
-                if (!recentFiles.contains(path)) {
-                    recentFiles.addElement(path)
-                }
-            }
-        }
+    private fun removeFile(file: VirtualFile) {
+        logFilesModel.removeElement(file.path)
     }
 
     /** Returns the root UI component. */

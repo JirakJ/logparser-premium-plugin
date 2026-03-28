@@ -2,6 +2,11 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.11] - 2026-03-28
+
+### Fixed
+- **Removed deprecated API** — Replaced `FileChooserDialog.choose(VirtualFile, Project)` with `FileChooser.chooseFiles()` to fix scheduled-for-removal API warnings on IntelliJ 2026.1+
+
 ## [2026.3.10] - 2026-03-27
 
 ### Added

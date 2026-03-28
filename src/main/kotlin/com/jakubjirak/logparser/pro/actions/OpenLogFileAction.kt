@@ -7,8 +7,8 @@ package com.jakubjirak.logparser.pro.actions
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
-import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -32,10 +32,10 @@ class OpenLogFileAction : AnAction() {
             }
         }
 
-        FileChooserFactory.getInstance()
-            .createFileChooser(descriptor, project, null)
-            .choose(null, project).firstOrNull()?.let { file ->
+        FileChooser.chooseFiles(descriptor, project, null) { files ->
+            files.firstOrNull()?.let { file ->
                 FileEditorManager.getInstance(project).openFile(file, true)
             }
+        }
     }
 }

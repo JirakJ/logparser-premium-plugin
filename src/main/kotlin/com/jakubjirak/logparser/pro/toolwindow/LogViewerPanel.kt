@@ -4,8 +4,8 @@
  */
 package com.jakubjirak.logparser.pro.toolwindow
 
+import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
-import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -73,15 +73,15 @@ class LogViewerPanel(private val project: Project) {
             withFileFilter { file: VirtualFile -> file.extension in setOf("log", "out") }
         }
 
-        FileChooserFactory.getInstance()
-            .createFileChooser(descriptor, project, null)
-            .choose(null, project).firstOrNull()?.let { file ->
+        FileChooser.chooseFiles(descriptor, project, null) { files ->
+            files.firstOrNull()?.let { file ->
                 FileEditorManager.getInstance(project).openFile(file, true)
                 val path = file.path
                 if (!recentFiles.contains(path)) {
                     recentFiles.addElement(path)
                 }
             }
+        }
     }
 
     /** Returns the root UI component. */

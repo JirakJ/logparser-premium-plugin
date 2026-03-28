@@ -2,6 +2,13 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.3.12] - 2026-03-28
+
+### Changed
+- **Removed custom file dialogs** — Plugin no longer opens its own file chooser; works purely on files already open in the IDE
+- **LogViewerPanel rewrite** — Tool window now auto-tracks `.log`/`.out` files opened in the editor via `FileEditorManagerListener`
+- **Removed OpenLogFileAction** — No longer needed; users open log files through standard IDE mechanisms (File → Open, drag & drop, project tree)
+
 ## [2026.3.11] - 2026-03-28
 
 ### Fixed

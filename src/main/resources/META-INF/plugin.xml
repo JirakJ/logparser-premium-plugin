@@ -120,12 +120,6 @@
         <group id="LogParser.ToolsMenu" text="LogParser Pro" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
 
-            <action id="LogParser.OpenFile"
-                    class="com.jakubjirak.logparser.pro.actions.OpenLogFileAction"
-                    text="Open Log File"
-                    description="Open log file for analysis"
-                    icon="AllIcons.Actions.MenuOpen"/>
-
             <action id="LogParser.TrackCorrelation"
                     class="com.jakubjirak.logparser.pro.actions.TrackCorrelationAction"
                     text="Track Transaction ID"

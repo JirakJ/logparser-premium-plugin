@@ -2,6 +2,25 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [2026.4.1] - 2026-04-22
+
+### Added
+- **Gzip support** — Transparent reading of `*.log.gz` files using either the filename or a gzip magic-number sniff; does not register `.gz` as a file type.
+- **Structured log parser** — Detects and extracts JSON and logfmt entries into typed fields (timestamp, level, logger, message plus arbitrary extra fields), with leading-anchor detection to avoid false positives in free-form text.
+- **Exception grouping** — `Tools → LogParser Pro → Group Exceptions` buckets stack traces by a normalised signature (lambda/enhancer suffixes, hex addresses, line numbers, numeric IDs all collapsed), preserves sample line numbers, first/last seen timestamps, and root cause extracted from `Caused by:` chains.
+- **Error timeline** — `Tools → LogParser Pro → Show Error Timeline` renders minute-granularity histograms with z-score spike detection.
+- **Log diff** — `Tools → LogParser Pro → Diff With Another Log…` compares two logs by normalised message signature.
+- **Secret redaction** — `Tools → LogParser Pro → Redact Secrets to File…` writes a redacted copy masking emails, JWTs, Bearer tokens, AWS/Stripe keys, Luhn-verified credit cards, UUIDs, IPs and password assignments (custom patterns supported).
+- **Grok pattern compiler** — Elastic Grok subset → native `Regex` with cycle detection, duplicate-name detection and expansion limits (~35 built-in patterns).
+- **Safer export** — `Tools → LogParser Pro → Export Log…` writes CSV (RFC-4180 with spreadsheet-formula-injection mitigation), JSON, or a self-contained HTML report with all user content HTML-escaped.
+- **Live tail reader** — Byte-offset incremental reader with UTF-8-safe partial-line buffering, CRLF handling and truncation detection.
+
+### Changed
+- **Plugin description** — Updated feature list with the new v2026.4.1 capabilities.
+
+### Compatibility
+- **sinceBuild raised to 251** (IntelliJ 2025.1+). Compile target bumped to 2025.1 so that all Platform API usages resolve to non-deprecated overloads. Verifier: 0 deprecated / 0 internal / 0 experimental / 0 scheduled-for-removal against IC-2025.1.3 and IC-2025.2.4.
+
 ## [2026.3.12] - 2026-03-28
 
 ### Changed

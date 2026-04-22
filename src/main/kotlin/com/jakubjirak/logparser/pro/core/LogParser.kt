@@ -5,6 +5,7 @@
 package com.jakubjirak.logparser.pro.core
 
 import com.intellij.openapi.Disposable
+import com.jakubjirak.logparser.pro.io.GzipLogReader
 import java.io.File
 
 /**
@@ -27,7 +28,7 @@ class LogParser(
      */
     fun parseLines(maxLines: Int = Int.MAX_VALUE): List<LogEntry> {
         val entries = mutableListOf<LogEntry>()
-        file.bufferedReader().use { reader ->
+        openReader().use { reader ->
             var lineNumber = 0
             reader.forEachLine { currentLine ->
                 if (lineNumber >= maxLines) return@forEachLine
@@ -85,11 +86,17 @@ class LogParser(
     /** Total number of lines in the file. */
     fun getLineCount(): Int {
         var count = 0
-        file.bufferedReader().use { reader ->
+        openReader().use { reader ->
             while (reader.readLine() != null) count++
         }
         return count
     }
+
+    /**
+     * Opens a reader over the underlying file, transparently decompressing
+     * the stream when the file is gzip-encoded.
+     */
+    private fun openReader() = GzipLogReader.open(file)
 
     override fun dispose() {
         // No persistent resources to release

@@ -18,15 +18,20 @@
   <li><b>Log Level Filtering</b> — Toggle buttons to filter by severity</li>
   <li><b>Keyword Search</b> — Live filtering across log entries</li>
   <li><b>Pattern Library</b> — Auto-detection of Spring Boot, Node.js, Python, and Java formats</li>
+  <li><b>Structured Logs</b> — JSON and logfmt parser extracting timestamp / level / message / arbitrary fields</li>
+  <li><b>Gzip Support</b> — Transparent reading of <code>*.log.gz</code> and other gzip-encoded logs</li>
   <li><b>Stack Trace Folding</b> — Collapse exception stack traces for readability</li>
-  <li><b>Regex Pattern Extraction</b> — Generate regex patterns from selected text</li>
+  <li><b>Exception Grouping</b> — Group stack traces by normalised signature (line numbers, lambdas, hashes ignored)</li>
+  <li><b>Error Timeline</b> — Minute-granularity histogram with z-score spike detection</li>
+  <li><b>Log Diff</b> — Compare two logs by normalised message signature (digits/UUIDs/timestamps collapsed)</li>
+  <li><b>Secret Redaction</b> — Mask emails, JWTs, Bearer tokens, AWS keys, Stripe keys, credit cards (Luhn-verified), IPs, UUIDs and password assignments before sharing a log</li>
+  <li><b>Grok Pattern Compiler</b> — Elastic Grok subset compiled to native regex for custom extractors</li>
+  <li><b>Safe Export</b> — CSV (RFC-4180 with formula-injection mitigation), JSON, and standalone HTML with HTML-escaped content</li>
   <li><b>Correlation ID Tracking</b> — Follow request flows across microservices</li>
   <li><b>Advanced Search</b> — Regex, fuzzy, and proximity search with log indexing</li>
-  <li><b>ML Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
+  <li><b>Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
   <li><b>Log Indexing</b> — Fast indexed search across large log files</li>
-  <li><b>ML Log Classification</b> — Automatic categorisation of log entries</li>
   <li><b>Statistics Dashboard</b> — Level distribution, top loggers, entries over time</li>
-  <li><b>Export</b> — Export filtered results to CSV, JSON, or plain text</li>
   <li><b>Rich Settings</b> — Configurable via Settings → Tools → LogParser Pro</li>
 </ul>
 
@@ -43,6 +48,20 @@
 </ul>]]></description>
 
     <change-notes><![CDATA[
+        <h3>2026.4.1 — Production Power Tools</h3>
+        <ul>
+            <li><b>Gzip support</b> — Transparent reading of <code>*.log.gz</code> (by name or magic number) with no file-type hijack</li>
+            <li><b>Structured parser</b> — JSON and logfmt detection with nested-field flattening and epoch / ISO timestamps</li>
+            <li><b>Exception grouping</b> — Tools → LogParser Pro → Group Exceptions; normalises lambdas, hex addresses, line numbers</li>
+            <li><b>Error timeline</b> — Minute-bucket histogram with z-score spike detection</li>
+            <li><b>Log diff</b> — Compare two logs by normalised signature (digits, UUIDs, timestamps collapsed)</li>
+            <li><b>Secret redaction</b> — Mask emails, JWTs, Bearer tokens, AWS/Stripe keys, Luhn-verified credit cards, IPs, UUIDs, password assignments</li>
+            <li><b>Grok pattern compiler</b> — Elastic Grok subset → native <code>Regex</code> with cycle and expansion guards</li>
+            <li><b>Safer export</b> — CSV mitigates spreadsheet formula injection; HTML export HTML-escapes all content</li>
+            <li><b>Live tail reader</b> — Byte-accurate incremental reader with truncation detection</li>
+            <li><b>100% unit-tested</b> core (300+ tests)</li>
+        </ul>
+
         <h3>2026.3.10 — Freemium Model</h3>
         <ul>
             <li><b>Freemium licensing</b> — Added product-descriptor for JetBrains Marketplace freemium model (code: PLOGPARSERPRO)</li>
@@ -53,21 +72,17 @@
             <li><b>LanguageFileType</b> — Proper LogLanguage + LanguageFileType + ParserDefinition integration</li>
             <li><b>Syntax Highlighting</b> — Colour-coded log levels in the text editor</li>
             <li><b>Tools Menu</b> — Actions now under Tools → LogParser Pro (not main menu)</li>
-            <li><b>Rich Settings</b> — 10 configurable options: max lines, font size, date format, export format, theme colors, and more</li>
-            <li><b>Enhanced Editor</b> — 6-column table (Line, Timestamp, Level, Thread, Logger, Message) with level toggle buttons</li>
+            <li><b>Rich Settings</b> — 10 configurable options</li>
+            <li><b>Enhanced Editor</b> — 6-column table with level toggle buttons</li>
             <li><b>Export</b> — Export filtered entries to CSV, JSON, or plain text</li>
-            <li><b>Context Menu</b> — Copy Line, Copy Message, Track Correlation ID, Go to Line</li>
             <li><b>Tool Window Tabs</b> — Log Viewer, Search, Correlation, and Statistics tabs</li>
-            <li><b>Statistics Dashboard</b> — Level distribution bar chart, top loggers, entries per hour</li>
-            <li><b>Analyze Log Action</b> — One-click full analysis report</li>
             <li><b>Package Consolidation</b> — All code under com.jakubjirak.logparser.pro</li>
-            <li><b>No .txt Hijacking</b> — Editor only accepts .log and .out files</li>
         </ul>
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <product-descriptor code="PLOGPARSERPRO" release-date="20260327" release-version="20263" optional="true"/>
+    <product-descriptor code="PLOGPARSERPRO" release-date="20260422" release-version="20264" optional="true"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- File Type (LanguageFileType with LogLanguage) -->
@@ -131,6 +146,36 @@
                     text="Analyze Log"
                     description="Run full analysis on current log file"
                     icon="AllIcons.Actions.ShowAsTree"/>
+
+            <action id="LogParser.GroupExceptions"
+                    class="com.jakubjirak.logparser.pro.actions.GroupExceptionsAction"
+                    text="Group Exceptions"
+                    description="Group stack traces by normalised signature and show a ranked report"
+                    icon="AllIcons.General.Error"/>
+
+            <action id="LogParser.ShowTimeline"
+                    class="com.jakubjirak.logparser.pro.actions.ShowTimelineAction"
+                    text="Show Error Timeline"
+                    description="Build a minute-granularity timeline with z-score spike detection"
+                    icon="AllIcons.Nodes.LogFolder"/>
+
+            <action id="LogParser.ExportLog"
+                    class="com.jakubjirak.logparser.pro.actions.ExportLogAction"
+                    text="Export Log…"
+                    description="Export parsed entries to CSV, JSON or a self-contained HTML report"
+                    icon="AllIcons.ToolbarDecorator.Export"/>
+
+            <action id="LogParser.RedactSecrets"
+                    class="com.jakubjirak.logparser.pro.actions.RedactSecretsAction"
+                    text="Redact Secrets to File…"
+                    description="Write a copy of the log with secrets, PII and tokens masked"
+                    icon="AllIcons.General.InspectionsEye"/>
+
+            <action id="LogParser.DiffLogs"
+                    class="com.jakubjirak.logparser.pro.actions.DiffLogsAction"
+                    text="Diff With Another Log…"
+                    description="Compare the current log against another file by normalised signature"
+                    icon="AllIcons.Actions.Diff"/>
         </group>
 
         <group id="LogParser.EditorPopup" text="LogParser Pro" popup="true">

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:LogExporter.kt$LogExporter$first == '=' || first == '+' || first == '-' || first == '@' || first == '\t' || first == '\r'</ID>
+    <ID>CyclomaticComplexMethod:StructuredLogParser.kt$StructuredLogParser$private fun parseLogfmt(line: String): StructuredFields</ID>
+    <ID>ForEachOnRange:StatisticsPanel.kt$StatisticsPanel$0..23</ID>
+    <ID>ImplicitDefaultLocale:StatisticsPanel.kt$StatisticsPanel$String.format("%02d", hour)</ID>
+    <ID>LoopWithTooManyJumpStatements:ExceptionGrouper.kt$ExceptionGrouper$for</ID>
+    <ID>LoopWithTooManyJumpStatements:StructuredLogParser.kt$StructuredLogParser$while</ID>
+    <ID>MaxLineLength:GrokPatternCompiler.kt$GrokPatternCompiler.Companion$"MONTH" to """\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b"""</ID>
+    <ID>MaxLineLength:LogFileEditor.kt$LogFileEditor$writer.write(""" {"line":${entry.lineNumber},"timestamp":"${entry.timestamp ?: ""}","level":"${entry.level}","thread":"${jsonEscape(entry.threadName ?: "")}","logger":"${jsonEscape(entry.loggerName ?: "")}","message":"${jsonEscape(entry.message)}"}""")</ID>
+    <ID>MaxLineLength:LogFileEditor.kt$LogFileEditor$writer.write("${entry.lineNumber},${entry.timestamp ?: ""},${entry.level},${csvEscape(entry.threadName ?: "")},${csvEscape(entry.loggerName ?: "")},${csvEscape(entry.message)}")</ID>
+    <ID>NestedBlockDepth:SensitiveDataRedactor.kt$SensitiveDataRedactor$fun redact(text: String): RedactionResult</ID>
+    <ID>NestedBlockDepth:StructuredLogParser.kt$StructuredLogParser$private fun parseLogfmt(line: String): StructuredFields</ID>
+    <ID>ReturnCount:LogLexer.kt$LogLexer.Companion$internal fun classifyLine(line: String): IElementType</ID>
+    <ID>SwallowedException:GzipLogReader.kt$GzipLogReader$ex: java.io.IOException</ID>
+    <ID>SwallowedException:StructuredLogParser.kt$StructuredLogParser$ex: JsonSyntaxException</ID>
+    <ID>ThrowsCount:GrokPatternCompiler.kt$GrokPatternCompiler$private fun expandReference(inner: String, state: CompileState, visiting: Set&lt;String>): String</ID>
+    <ID>UnusedPrivateMember:LogLanguage.kt$LogLanguage$private fun readResolve(): Any</ID>
+    <ID>UseCheckOrError:LiveTailReader.kt$LiveTailReader$throw IllegalStateException("LiveTailReader must have a single consumer")</ID>
+  </CurrentIssues>
+</SmellBaseline>

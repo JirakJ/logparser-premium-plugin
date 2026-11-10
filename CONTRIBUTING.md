@@ -17,21 +17,22 @@ Thank you for your interest in contributing! 🎉
 
 ### Feature Requests
 
-Premium subscribers get priority on the roadmap! To request a feature:
+To request a feature:
 
 1. Open an issue with tag `feature-request`
 2. Describe the use case
 3. Explain why it's valuable
-4. Premium users: mention your license
 
 ### Code Contributions
 
-**Note:** LogParser Pro is proprietary software. We do not accept external code contributions at this time. However, we welcome:
+LogParser Pro is open source under the Apache License 2.0 — code contributions are welcome:
 
-- Bug reports
-- Feature suggestions
-- Documentation improvements
-- Test case examples
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for your change (`./gradlew test`)
+4. Open a pull request
+
+By contributing you agree that your contribution is licensed under Apache-2.0.
 
 ### Documentation
 
@@ -45,8 +46,8 @@ Documentation improvements are always welcome:
 ## Development Setup
 
 ```bash
-git clone https://github.com/yourusername/logparser.git
-cd logparser
+git clone https://github.com/JirakJ/logparser-premium-plugin.git
+cd logparser-premium-plugin
 ./gradlew build
 ./gradlew runIde
 ```

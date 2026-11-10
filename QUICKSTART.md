@@ -67,17 +67,16 @@ java.sql.SQLException: Connection refused
 
 1. **View** → **Tool Windows** → **LogParser Pro**
 2. See welcome screen with feature overview
-3. Click **Start 30-Day FREE Trial** to test premium features
 
 ---
 
-## Step 4: Try Premium Features (Trial)
+## Step 4: Try Advanced Features
 
 ### Track Correlation ID
 
 1. Open `test.log` in LogParser editor
 2. Select `abc-123-def` in the editor
-3. Right-click → **Find Correlation ID (Premium)**
+3. Right-click → **Find Correlation ID**
 4. See all log entries with this correlation ID highlighted
 
 ### Connect to Kubernetes (if available)
@@ -105,26 +104,6 @@ java.sql.SQLException: Connection refused
 3. Click ⚙️ → **Install Plugin from Disk**
 4. Select `build/distributions/logparser-pro-1.0.0-SNAPSHOT.zip`
 5. Restart IDE
-
----
-
-## Step 6: Test License Management
-
-### Start Trial
-
-1. **Menu:** `LogParser Pro` → `Manage License`
-2. Click **Start 30-Day FREE Trial**
-3. See confirmation: "Trial activated!"
-4. All premium features now unlocked
-
-### Activate Premium License
-
-1. **Menu:** `LogParser Pro` → `Manage License`
-2. Enter license key: `TEST-1234-ABCD-5678` (format example)
-3. Enter email: `your@email.com`
-4. Click **Activate License**
-
-**Note:** For testing, license validation is simple format check. Real validation requires backend (future).
 
 ---
 
@@ -221,14 +200,13 @@ intellij {
 ### For Marketers
 
 1. ✅ Read `docs/MARKETING_PLAN.md` for go-to-market strategy
-2. ✅ Review pricing in `README.md`
 3. ✅ Prepare demo video and screenshots
 4. ✅ Submit to JetBrains Marketplace
 
 ### For Users
 
 1. ✅ Try free features on your real log files
-2. ✅ Start 30-day trial for premium features
+2. ✅ Try every feature — all of them are free
 3. ✅ Provide feedback via GitHub Issues
 4. ✅ Share with colleagues if you find it useful
 
@@ -287,10 +265,9 @@ intellij {
 ## What's Included
 
 - ✅ **21 Kotlin source files** (1,487 lines of code)
-- ✅ **Freemium licensing system** (Free/Premium/Trial)
 - ✅ **Log parsing engine** (timestamps, levels, correlation IDs)
 - ✅ **Multi-source support** (Local files, Kubernetes)
-- ✅ **Correlation tracking** (Premium feature)
+- ✅ **Correlation tracking**
 - ✅ **IntelliJ UI integration** (Tool window, actions, editors)
 - ✅ **CI/CD pipeline** (GitHub Actions)
 - ✅ **Comprehensive documentation** (5 markdown files)

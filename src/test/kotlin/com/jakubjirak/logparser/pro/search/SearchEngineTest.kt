@@ -254,5 +254,89 @@ class SearchEngineTest {
             assertTrue(query.isFuzzy)
             assertEquals(0.6, query.fuzzyThreshold)
         }
+
+        @Test
+        fun `builds grok query`() {
+            val query = engine.buildQuery {
+                pattern("%{LOGLEVEL:level}")
+                grok()
+            }
+            assertTrue(query.isGrok)
+            assertFalse(query.isRegex)
+        }
+    }
+
+    // ── Grok search ────────────────────────────────────────────────────
+
+    @Nested
+    inner class GrokSearch {
+
+        private val grokPattern = "\\[%{NOTSPACE:thread}\\] %{LOGLEVEL:level} %{GREEDYDATA:msg}"
+
+        @Test
+        fun `matches every line and extracts named fields`() {
+            val results = engine.search(sampleLogs, SearchEngine.SearchQuery(pattern = grokPattern, isGrok = true))
+            assertEquals(5, results.size)
+            assertEquals(
+                mapOf("thread" to "main", "level" to "ERROR", "msg" to "NullPointerException occurred"),
+                results[1].fields
+            )
+        }
+
+        @Test
+        fun `only lines matching the grok expression are returned`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{LOGLEVEL:level} Slow", isGrok = true)
+            val results = engine.search(sampleLogs, query)
+            assertEquals(listOf(3), results.map { it.lineNumber })
+            assertEquals(mapOf("level" to "WARN"), results[0].fields)
+        }
+
+        @Test
+        fun `highlight covers the whole grok match`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{LOGLEVEL:level}", isGrok = true, isCaseSensitive = true)
+            val line = sampleLogs[2]
+            val hit = engine.search(listOf(line), query).single()
+            val start = line.indexOf("DEBUG")
+            assertEquals(listOf(start to start + "DEBUG".length), hit.highlights)
+        }
+
+        @Test
+        fun `case insensitive by default`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{LOGLEVEL:level}", isGrok = true)
+            val hit = engine.search(listOf("level=error here"), query).single()
+            assertEquals("error", hit.fields["level"])
+        }
+
+        @Test
+        fun `case sensitive grok rejects lowercase level`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{LOGLEVEL:level}", isGrok = true, isCaseSensitive = true)
+            assertTrue(engine.search(listOf("level=error here"), query).isEmpty())
+        }
+
+        @Test
+        fun `level filter still applies to grok hits`() {
+            val query = SearchEngine.SearchQuery(pattern = grokPattern, isGrok = true, logLevels = setOf("WARN"))
+            assertEquals(listOf(3), engine.search(sampleLogs, query).map { it.lineNumber })
+        }
+
+        @Test
+        fun `unknown grok pattern throws compile exception`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{NOPE:x}", isGrok = true)
+            assertThrows(com.jakubjirak.logparser.pro.grok.GrokCompileException::class.java) {
+                engine.search(sampleLogs, query)
+            }
+        }
+
+        @Test
+        fun `grok takes precedence over regex flag`() {
+            val query = SearchEngine.SearchQuery(pattern = "%{LOGLEVEL:level} Slow", isGrok = true, isRegex = true)
+            assertEquals(listOf(3), engine.search(sampleLogs, query).map { it.lineNumber })
+        }
+
+        @Test
+        fun `non-grok results have no fields`() {
+            val results = engine.search(sampleLogs, SearchEngine.SearchQuery(pattern = "ERROR", isRegex = true))
+            assertTrue(results.single().fields.isEmpty())
+        }
     }
 }

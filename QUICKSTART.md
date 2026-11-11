@@ -33,6 +33,7 @@ cd logparser-premium-plugin
    Redact Secrets to File… and Diff With Another Log….
 4. Select `abc-123-def` → right-click → **LogParser Pro → Find Correlation ID**.
 5. The **LogParser Pro** tool window (bottom) has Log Viewer, Search, Correlation and Statistics tabs.
+   In **Search**, tick **Grok** and enter `%{LOGLEVEL:level} \[%{NOTSPACE:thread}\] %{GREEDYDATA:msg}` to see each hit's fields.
 
 ## Checks
 

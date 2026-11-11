@@ -25,10 +25,10 @@
   <li><b>Error Timeline</b> — Minute-granularity histogram with z-score spike detection</li>
   <li><b>Log Diff</b> — Compare two logs by normalised message signature (digits/UUIDs/timestamps collapsed)</li>
   <li><b>Secret Redaction</b> — Mask emails, JWTs, Bearer tokens, AWS keys, Stripe keys, credit cards (Luhn-verified), IPs, UUIDs and password assignments before sharing a log</li>
-  <li><b>Grok Pattern Compiler</b> — Elastic Grok subset compiled to native regex for custom extractors</li>
+  <li><b>Grok Search</b> — The Search tab accepts Elastic Grok patterns (e.g. <code>%{LOGLEVEL:level} %{GREEDYDATA:msg}</code>) and shows the extracted fields of each hit</li>
   <li><b>Safe Export</b> — CSV (RFC-4180 with formula-injection mitigation), JSON, and standalone HTML with HTML-escaped content</li>
   <li><b>Correlation ID Tracking</b> — Follow request flows across microservices</li>
-  <li><b>Advanced Search</b> — Regex, fuzzy (Levenshtein) and plain-text search</li>
+  <li><b>Advanced Search</b> — Grok, regex, fuzzy (Levenshtein) and plain-text search</li>
   <li><b>Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
   <li><b>Statistics Dashboard</b> — Level distribution, top loggers, entries over time</li>
   <li><b>Settings</b> — Line limit, font size, level colours and export format under Settings → Tools → LogParser Pro</li>
@@ -46,6 +46,7 @@
 </ul>]]></description>
 
     <change-notes><![CDATA[
+<h3>2026.9.1</h3><ul><li>Added: <b>Grok search</b> — the tool window's Search tab has a <b>Grok</b> option: patterns such as <code>%{LOGLEVEL:level} %{GREEDYDATA:msg}</code> are compiled by the bundled Grok compiler (previously advertised but not reachable from the UI) and each hit lists its extracted fields.</li><li>Fixed: <b>Search</b> — an invalid regex or Grok pattern now shows an error message in the Search tab instead of raising an IDE error; the pattern is compiled once per search instead of once per line.</li></ul>
 <h3>2026.9.0</h3><ul><li>Secret redaction keeps the key name (db.password=[REDACTED]) instead of writing a literal placeholder.</li><li>Log editor Export now escapes CSV formula injection and JSON output.</li><li>Go to Line in the log editor context menu now works.</li><li>Removed settings that had no effect and an unused, broken log indexer.</li></ul>
 <h3>2026.8.0</h3><ul><li>The plugin is now completely free — all features unlocked, no license needed.</li><li>Source code is now open source under Apache-2.0: https://github.com/JirakJ/logparser-premium-plugin</li></ul>
 

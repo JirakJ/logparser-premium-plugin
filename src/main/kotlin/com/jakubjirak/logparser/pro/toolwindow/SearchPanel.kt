@@ -13,6 +13,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.JBUI
 import com.jakubjirak.logparser.pro.core.LogParserService
 import com.jakubjirak.logparser.pro.search.SearchEngine
+import com.jakubjirak.logparser.pro.search.SearchResultFormatter
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.*
@@ -20,7 +21,8 @@ import javax.swing.*
 /**
  * Search tab in the tool window.
  *
- * Provides regex, fuzzy, and simple text search across the currently loaded log file.
+ * Provides Grok, regex, fuzzy, and simple text search across the currently loaded log file.
+ * Grok hits list their extracted fields (e.g. `%{LOGLEVEL:level} %{GREEDYDATA:msg}`).
  */
 class SearchPanel(private val project: Project) {
 
@@ -28,6 +30,9 @@ class SearchPanel(private val project: Project) {
     private val searchField = JBTextField(30)
     private val resultsArea = JBTextArea(20, 60)
     private val regexCheckbox = JCheckBox("Regex")
+    private val grokCheckbox = JCheckBox("Grok").apply {
+        toolTipText = "Grok pattern, e.g. %{TIMESTAMP_ISO8601:ts} %{LOGLEVEL:level} %{GREEDYDATA:msg}"
+    }
     private val fuzzyCheckbox = JCheckBox("Fuzzy")
     private val caseSensitiveCheckbox = JCheckBox("Case Sensitive")
 
@@ -57,6 +62,8 @@ class SearchPanel(private val project: Project) {
         val optionsPanel = JPanel()
         optionsPanel.layout = BoxLayout(optionsPanel, BoxLayout.X_AXIS)
         optionsPanel.add(regexCheckbox)
+        optionsPanel.add(Box.createHorizontalStrut(8))
+        optionsPanel.add(grokCheckbox)
         optionsPanel.add(Box.createHorizontalStrut(8))
         optionsPanel.add(fuzzyCheckbox)
         optionsPanel.add(Box.createHorizontalStrut(8))
@@ -88,26 +95,12 @@ class SearchPanel(private val project: Project) {
         val query = SearchEngine.SearchQuery(
             pattern = pattern,
             isRegex = regexCheckbox.isSelected,
+            isGrok = grokCheckbox.isSelected,
             isCaseSensitive = caseSensitiveCheckbox.isSelected,
             isFuzzy = fuzzyCheckbox.isSelected
         )
 
-        val results = engine.search(lines, query)
-
-        resultsArea.text = if (results.isEmpty()) {
-            "No matches found for: $pattern"
-        } else {
-            buildString {
-                appendLine("Found ${results.size} matches:")
-                appendLine()
-                results.take(200).forEach { r ->
-                    appendLine("Line ${r.lineNumber + 1}: ${r.content}")
-                }
-                if (results.size > 200) {
-                    appendLine("... and ${results.size - 200} more matches")
-                }
-            }
-        }
+        resultsArea.text = SearchResultFormatter.searchAndFormat(engine, lines, query)
         resultsArea.caretPosition = 0
     }
 

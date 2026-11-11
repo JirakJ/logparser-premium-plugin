@@ -16,7 +16,8 @@ Advanced log file analysis plugin for JetBrains IDEs with colour-coded log level
 - **Regex pattern extraction** — Generate regex patterns from selected text (UUIDs, IPs, timestamps, numbers)
 - **Settings** — Max lines, font size, theme-aware level colours, editor export format
 - **Correlation ID tracking** — Track request flows across log entries by correlation/trace ID
-- **Advanced search** — Regex, fuzzy (Levenshtein distance), and simple text search
+- **Advanced search** — Grok, regex, fuzzy (Levenshtein distance), and simple text search
+- **Grok search** — Search tab accepts Elastic Grok patterns (e.g. `%{TIMESTAMP_ISO8601:ts} %{LOGLEVEL:level} %{GREEDYDATA:msg}`) and lists the extracted fields under each hit
 - **Log classification** — Keyword-based categorisation of entries into database, network, security, performance, business logic, and system
 - **Anomaly detection** — Statistical anomaly scoring based on feature-space distance
 - **Pattern discovery** — Automatic grouping of similar messages with normalisation
@@ -66,7 +67,7 @@ Select text in the editor → right-click → **Extract Pattern** to generate a 
 ### Tool Window
 Open the **LogParser Pro** tool window (bottom panel) for tabbed access to:
 - **Log Viewer** — Quick file open and recent files
-- **Search** — Regex, fuzzy, and simple text search
+- **Search** — Grok (with extracted fields), regex, fuzzy, and simple text search
 - **Correlation** — Enter correlation ID, see timeline and matching entries
 - **Statistics** — Level distribution, top loggers, entries per hour
 

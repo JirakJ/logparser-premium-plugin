@@ -64,9 +64,7 @@ class LiveTailReader(
      * @throws IllegalStateException if invoked concurrently on the same instance
      */
     fun pullNew(): TailChunk {
-        if (!reading.compareAndSet(false, true)) {
-            throw IllegalStateException("LiveTailReader must have a single consumer")
-        }
+        check(reading.compareAndSet(false, true)) { "LiveTailReader must have a single consumer" }
         try {
             if (!file.isFile) {
                 // File disappeared — wait for it to reappear.

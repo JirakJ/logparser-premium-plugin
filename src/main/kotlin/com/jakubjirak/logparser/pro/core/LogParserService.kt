@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
  * Parsers are cached by absolute file path so that repeated access to the same log file
  * reuses the existing parser rather than re-reading the file from disk.
  */
-class LogParserService(private val project: Project) : Disposable {
+class LogParserService : Disposable {
 
     private val patternLibrary = PatternLibrary()
     private val parsers = mutableMapOf<String, LogParser>()

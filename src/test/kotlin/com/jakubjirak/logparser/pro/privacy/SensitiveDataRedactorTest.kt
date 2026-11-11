@@ -124,4 +124,23 @@ class SensitiveDataRedactorTest {
         val result = redactor.redact("from 10.0.0.1 to 10.0.0.2 then 10.0.0.3")
         assertEquals(3, result.redactions.size)
     }
+
+    @Test
+    fun `password assignment keeps the key and expands the group reference`() {
+        val result = redactor.redact("db.password=hunter2secret running")
+        assertEquals("db.password=[REDACTED] running", result.text)
+    }
+
+    @Test
+    fun `api key assignment with colon and quotes keeps the key`() {
+        val result = redactor.redact("""api_key: "abcdef123456" sent""")
+        assertEquals("api_key=[REDACTED] sent", result.text)
+    }
+
+    @Test
+    fun `expandReplacement substitutes known groups and blanks unknown ones`() {
+        val match = Regex("(a)(b)").find("ab")!!
+        assertEquals("b-a-", SensitiveDataRedactor.expandReplacement("$2-$1-$7", match))
+        assertEquals("plain", SensitiveDataRedactor.expandReplacement("plain", match))
+    }
 }

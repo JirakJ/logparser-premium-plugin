@@ -33,3 +33,9 @@ Thumbs.db
 # Build outputs
 dist/
 target/
+
+# IntelliJ Platform Gradle plugin cache
+.intellijPlatform/
+
+# Secrets
+.env

@@ -127,14 +127,7 @@ class LogExporter {
 
     private fun csvInjectionEscape(value: String): String {
         if (value.isEmpty()) return value
-        val first = value[0]
-        return if (first == '=' || first == '+' || first == '-' || first == '@'
-            || first == '\t' || first == '\r'
-        ) {
-            "'$value"
-        } else {
-            value
-        }
+        return if (value[0] in FORMULA_TRIGGERS) "'$value" else value
     }
 
     /** Escapes `&`, `<`, `>`, `"`, `'` for safe HTML insertion. Exposed for tests. */
@@ -173,5 +166,8 @@ class LogExporter {
             tr.trace td{background:#fbfbfb;color:#555;}
             pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:SFMono-Regular,Consolas,Menlo,monospace;}
         """.trimIndent()
+
+        /** Leading characters that make spreadsheet apps evaluate a cell as a formula (OWASP CSV injection). */
+        private val FORMULA_TRIGGERS = setOf('=', '+', '-', '@', '\t', '\r')
     }
 }

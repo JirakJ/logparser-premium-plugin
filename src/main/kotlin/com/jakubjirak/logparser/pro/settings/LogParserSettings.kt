@@ -11,8 +11,8 @@ import com.intellij.openapi.components.*
  * Persistent settings for LogParser Pro, accessible via
  * **Settings → Tools → LogParser Pro**.
  *
- * Stores user preferences including display options, search defaults,
- * and export format preferences.
+ * Stores the options the log editor actually honours: how many lines to load,
+ * level colouring, table font size and the editor's export format.
  */
 @Service(Service.Level.APP)
 @State(name = "com.jakubjirak.logparser.pro.Settings", storages = [Storage("com-jakubjirak-logparser-pro.xml")])
@@ -20,15 +20,9 @@ class LogParserSettings : PersistentStateComponent<LogParserSettings.State> {
 
     /** Serialisable settings state. */
     data class State(
-        var maxLinesToParse: Int = 100_000,
-        var defaultFilterLevel: String = "ALL",
-        var showLineNumbers: Boolean = true,
-        var autoRefresh: Boolean = false,
-        var dateFormatPattern: String = "yyyy-MM-dd HH:mm:ss.SSS",
-        var customCorrelationPatterns: String = "",
+        var maxLinesToParse: Int = DEFAULT_MAX_LINES,
         var useThemeAwareColors: Boolean = true,
-        var wrapLongLines: Boolean = false,
-        var logViewerFontSize: Int = 12,
+        var logViewerFontSize: Int = DEFAULT_FONT_SIZE,
         var exportFormat: String = "CSV"
     )
 
@@ -38,6 +32,9 @@ class LogParserSettings : PersistentStateComponent<LogParserSettings.State> {
     override fun loadState(state: State) { myState = state }
 
     companion object {
+        const val DEFAULT_MAX_LINES: Int = 100_000
+        const val DEFAULT_FONT_SIZE: Int = 12
+
         /** Returns the application-level settings instance. */
         fun getInstance(): LogParserSettings {
             return ApplicationManager.getApplication().getService(LogParserSettings::class.java)

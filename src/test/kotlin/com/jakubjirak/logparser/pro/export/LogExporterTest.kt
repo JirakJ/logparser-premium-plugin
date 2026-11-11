@@ -132,4 +132,15 @@ class LogExporterTest {
         assertTrue(exporter.export(listOf(sample()), ExportFormat.JSON).trim().startsWith("["))
         assertTrue(exporter.export(listOf(sample()), ExportFormat.HTML).startsWith("<!DOCTYPE"))
     }
+
+    @Test
+    fun `csvField neutralises every formula trigger`() {
+        val exporter = LogExporter()
+        listOf("=1+1", "+1", "-1", "@SUM(A1)").forEach {
+            assertEquals("'$it", exporter.csvField(it), it)
+        }
+        assertEquals("'\tx", exporter.csvField("\tx"))
+        assertEquals("safe", exporter.csvField("safe"))
+        assertEquals("", exporter.csvField(""))
+    }
 }

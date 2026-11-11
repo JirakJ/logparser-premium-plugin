@@ -8,7 +8,7 @@
 <p>
   Stop switching between your IDE and log viewers. LogParser Pro brings professional log analysis
   directly into your JetBrains IDE with colour-coded levels, filtering, pattern matching,
-  correlation tracking, and ML-powered anomaly detection.
+  correlation tracking, and statistical anomaly detection.
 </p>
 
 <h3>Features</h3>
@@ -28,23 +28,21 @@
   <li><b>Grok Pattern Compiler</b> — Elastic Grok subset compiled to native regex for custom extractors</li>
   <li><b>Safe Export</b> — CSV (RFC-4180 with formula-injection mitigation), JSON, and standalone HTML with HTML-escaped content</li>
   <li><b>Correlation ID Tracking</b> — Follow request flows across microservices</li>
-  <li><b>Advanced Search</b> — Regex, fuzzy, and proximity search with log indexing</li>
+  <li><b>Advanced Search</b> — Regex, fuzzy (Levenshtein) and plain-text search</li>
   <li><b>Anomaly Detection</b> — Statistical pattern discovery and anomaly scoring</li>
-  <li><b>Log Indexing</b> — Fast indexed search across large log files</li>
   <li><b>Statistics Dashboard</b> — Level distribution, top loggers, entries over time</li>
-  <li><b>Rich Settings</b> — Configurable via Settings → Tools → LogParser Pro</li>
+  <li><b>Settings</b> — Line limit, font size, level colours and export format under Settings → Tools → LogParser Pro</li>
 </ul>
 
 <h3>Requirements</h3>
 <ul>
-  <li>IntelliJ IDEA 2023.2+ (or any JetBrains IDE build 232+)</li>
-  <li>JDK 17+</li>
+  <li>Any JetBrains IDE 2025.1 or newer (build 251+)</li>
 </ul>
 
 <h3>Support</h3>
 <ul>
-  <li><a href="https://github.com/JirakJ/logparser/issues">Issue Tracker</a></li>
-  <li><a href="https://github.com/JirakJ/logparser">Documentation</a></li>
+  <li><a href="https://github.com/JirakJ/logparser-premium-plugin/issues">Issue Tracker</a></li>
+  <li><a href="https://github.com/JirakJ/logparser-premium-plugin">Source &amp; documentation</a></li>
 </ul>]]></description>
 
     <change-notes><![CDATA[
@@ -112,9 +110,6 @@
 
         <!-- Project Service -->
         <projectService serviceImplementation="com.jakubjirak.logparser.pro.core.LogParserService"/>
-
-        <!-- Application Service for Settings -->
-        <applicationService serviceImplementation="com.jakubjirak.logparser.pro.settings.LogParserSettings"/>
 
         <!-- Settings Panel -->
         <applicationConfigurable

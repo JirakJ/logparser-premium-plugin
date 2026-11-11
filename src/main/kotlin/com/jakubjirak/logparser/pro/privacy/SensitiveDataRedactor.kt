@@ -59,20 +59,17 @@ class SensitiveDataRedactor(
      */
     fun redact(text: String): RedactionResult {
         if (text.isEmpty()) return RedactionResult(text, emptyList())
-        val hits = mutableListOf<Hit>()
-        for (pattern in patterns) {
-            for (match in pattern.regex.findAll(text)) {
-                if (pattern.luhnValidate) {
-                    val digits = match.value.filter { it.isDigit() }
-                    if (!isValidLuhn(digits)) continue
-                }
-                hits += Hit(match.range.first, match.range.last + 1, pattern)
-            }
-        }
+        val hits = patterns.flatMap { pattern -> hitsFor(pattern, text) }
         if (hits.isEmpty()) return RedactionResult(text, emptyList())
         val merged = mergeNonOverlapping(hits.sortedWith(compareBy({ it.start }, { -it.end })))
         return assemble(text, merged)
     }
+
+    private fun hitsFor(pattern: RedactionPattern, text: String): List<Hit> =
+        pattern.regex.findAll(text)
+            .filter { match -> !pattern.luhnValidate || isValidLuhn(match.value.filter { it.isDigit() }) }
+            .map { match -> Hit(match.range.first, match.range.last + 1, pattern, match) }
+            .toList()
 
     private fun mergeNonOverlapping(sorted: List<Hit>): List<Hit> {
         val out = mutableListOf<Hit>()
@@ -92,7 +89,7 @@ class SensitiveDataRedactor(
         var cursor = 0
         for (h in hits) {
             if (h.start > cursor) builder.append(text, cursor, h.start)
-            builder.append(h.pattern.replacement)
+            builder.append(expandReplacement(h.pattern.replacement, h.match))
             redactions += Redaction(h.pattern.name, h.start, h.end)
             cursor = h.end
         }
@@ -100,7 +97,7 @@ class SensitiveDataRedactor(
         return RedactionResult(builder.toString(), redactions)
     }
 
-    private data class Hit(val start: Int, val end: Int, val pattern: RedactionPattern)
+    private data class Hit(val start: Int, val end: Int, val pattern: RedactionPattern, val match: MatchResult)
 
     companion object {
         /**
@@ -176,6 +173,17 @@ class SensitiveDataRedactor(
                 "[STRIPE_KEY]"
             )
         )
+
+        private val GROUP_REFERENCE = Regex("""\$(\d)""")
+
+        /**
+         * Expands `$n` group references in [replacement] with the groups captured by [match]
+         * (e.g. `"$1=[REDACTED]"` keeps the key of a `password=...` assignment). Unknown groups expand to "".
+         */
+        internal fun expandReplacement(replacement: String, match: MatchResult): String =
+            GROUP_REFERENCE.replace(replacement) { ref ->
+                match.groupValues.getOrElse(ref.groupValues[1].toInt()) { "" }
+            }
 
         /** Runs the Luhn checksum on a digits-only string. */
         fun isValidLuhn(digits: String): Boolean {

@@ -47,7 +47,8 @@ object GzipLogReader {
                 val b2 = stream.read()
                 b1 == (MAGIC_BYTE_1.toInt() and 0xFF) && b2 == (MAGIC_BYTE_2.toInt() and 0xFF)
             }
-        } catch (ex: java.io.IOException) {
+        } catch (_: java.io.IOException) {
+            // unreadable file: treat as not gzip, the caller falls back to plain-text reading
             false
         }
     }

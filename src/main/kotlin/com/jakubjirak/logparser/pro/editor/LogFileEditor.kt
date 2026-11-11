@@ -7,6 +7,7 @@ package com.jakubjirak.logparser.pro.editor
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
@@ -20,6 +21,7 @@ import com.jakubjirak.logparser.pro.core.LogEntry
 import com.jakubjirak.logparser.pro.core.LogFilter
 import com.jakubjirak.logparser.pro.core.LogLevel
 import com.jakubjirak.logparser.pro.core.LogParserService
+import com.jakubjirak.logparser.pro.export.LogExporter
 import com.jakubjirak.logparser.pro.settings.LogParserSettings
 import java.awt.BorderLayout
 import java.awt.Component
@@ -195,15 +197,12 @@ class LogFileEditor(
         )
     }
 
+    /** Opens the log in the plain text editor with the caret on the selected entry's line. */
     private fun goToSelectedLine() {
         val row = table.selectedRow
         if (row < 0 || row >= filteredEntries.size) return
-        val lineNumber = filteredEntries[row].lineNumber
-        val targetRow = filteredEntries.indexOfFirst { it.lineNumber == lineNumber }
-        if (targetRow >= 0) {
-            table.setRowSelectionInterval(targetRow, targetRow)
-            table.scrollRectToVisible(table.getCellRect(targetRow, 0, true))
-        }
+        val zeroBasedLine = (filteredEntries[row].lineNumber - 1).coerceAtLeast(0)
+        OpenFileDescriptor(project, file, zeroBasedLine, 0).navigate(true)
     }
 
     private fun exportFiltered() {
@@ -221,52 +220,13 @@ class LogFileEditor(
 
         if (chooser.showSaveDialog(panel) != JFileChooser.APPROVE_OPTION) return
 
-        val outputFile = chooser.selectedFile
-        outputFile.bufferedWriter().use { writer ->
-            when (format) {
-                "JSON" -> exportJson(writer)
-                "Plain Text" -> exportPlainText(writer)
-                else -> exportCsv(writer)
-            }
+        val entries = filteredEntries
+        val text = when (format) {
+            "JSON" -> LogExporter().toJson(entries)
+            "Plain Text" -> entries.joinToString(separator = "\n", postfix = if (entries.isEmpty()) "" else "\n") { it.rawLine }
+            else -> LogExporter().toCsv(entries)
         }
-    }
-
-    private fun exportCsv(writer: java.io.BufferedWriter) {
-        writer.write("Line,Timestamp,Level,Thread,Logger,Message")
-        writer.newLine()
-        for (entry in filteredEntries) {
-            writer.write("${entry.lineNumber},${entry.timestamp ?: ""},${entry.level},${csvEscape(entry.threadName ?: "")},${csvEscape(entry.loggerName ?: "")},${csvEscape(entry.message)}")
-            writer.newLine()
-        }
-    }
-
-    private fun exportJson(writer: java.io.BufferedWriter) {
-        writer.write("[\n")
-        filteredEntries.forEachIndexed { index, entry ->
-            writer.write("""  {"line":${entry.lineNumber},"timestamp":"${entry.timestamp ?: ""}","level":"${entry.level}","thread":"${jsonEscape(entry.threadName ?: "")}","logger":"${jsonEscape(entry.loggerName ?: "")}","message":"${jsonEscape(entry.message)}"}""")
-            if (index < filteredEntries.size - 1) writer.write(",")
-            writer.newLine()
-        }
-        writer.write("]\n")
-    }
-
-    private fun exportPlainText(writer: java.io.BufferedWriter) {
-        for (entry in filteredEntries) {
-            writer.write(entry.rawLine)
-            writer.newLine()
-        }
-    }
-
-    private fun csvEscape(value: String): String {
-        return if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
-            "\"${value.replace("\"", "\"\"")}\""
-        } else {
-            value
-        }
-    }
-
-    private fun jsonEscape(value: String): String {
-        return value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+        chooser.selectedFile.writeText(text)
     }
 
     private fun loadLogFile() {

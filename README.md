@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-Advanced log file analysis plugin for JetBrains IDEs with colour-coded log levels, filtering, pattern matching, correlation tracking, and ML-powered anomaly detection.
+Advanced log file analysis plugin for JetBrains IDEs with colour-coded log levels, filtering, pattern matching, correlation tracking, and statistical anomaly detection.
 
 ## Features
 
@@ -14,16 +14,15 @@ Advanced log file analysis plugin for JetBrains IDEs with colour-coded log level
 - **Pattern library** — Auto-detection of Spring Boot, Node.js, Python, and Java log formats
 - **Stack trace folding** — Consecutive stack trace lines are folded into the parent entry
 - **Regex pattern extraction** — Generate regex patterns from selected text (UUIDs, IPs, timestamps, numbers)
-- **Rich configurable settings** — Max lines, font size, date format, export format, theme colours, correlation patterns, wrap lines
+- **Settings** — Max lines, font size, theme-aware level colours, editor export format
 - **Correlation ID tracking** — Track request flows across log entries by correlation/trace ID
 - **Advanced search** — Regex, fuzzy (Levenshtein distance), and simple text search
-- **Log indexing** — Multi-threaded indexing for instant search across large files
-- **ML log classification** — Categorise entries into database, network, security, performance, business logic, and system
+- **Log classification** — Keyword-based categorisation of entries into database, network, security, performance, business logic, and system
 - **Anomaly detection** — Statistical anomaly scoring based on feature-space distance
 - **Pattern discovery** — Automatic grouping of similar messages with normalisation
 - **Statistics dashboard** — Level distribution, top 10 loggers, entries per hour, error/warning rates
-- **Export** — Export filtered results to CSV, JSON, or plain text
-- **Context menu** — Right-click: Copy Line, Copy Message, Track Correlation ID, Go to Line
+- **Export** — Editor Export button writes the filtered rows to CSV, JSON or plain text; Tools → LogParser Pro → Export Log… writes CSV, JSON or a standalone HTML report (CSV cells are protected against spreadsheet formula injection)
+- **Context menu** — Right-click a row: Copy Line, Copy Message, Track Correlation ID, Go to Line (opens the log in the text editor at that line)
 - **Tool window tabs** — Log Viewer, Search, Correlation, and Statistics tabs
 
 ## Installation
@@ -33,8 +32,7 @@ Advanced log file analysis plugin for JetBrains IDEs with colour-coded log level
 
 ## Requirements
 
-- IntelliJ IDEA 2023.2+ (build 232+) or any JetBrains IDE
-- JDK 17+
+- Any JetBrains IDE 2025.1 or newer (build 251+)
 
 ## Configuration
 
@@ -42,21 +40,16 @@ Settings → Tools → LogParser Pro
 
 | Setting | Description | Default |
 |---------|-------------|---------|
-| Max lines to parse | Maximum number of lines to load from a file | 100,000 |
-| Default filter level | Initial log level filter | ALL |
-| Show line numbers | Display line numbers in the editor | true |
-| Auto-refresh on file change | Reload when the log file changes | false |
-| Date format pattern | Pattern for timestamp parsing | yyyy-MM-dd HH:mm:ss.SSS |
-| Custom correlation ID patterns | Comma-separated regex patterns | (empty) |
-| Use theme-aware colours | Adapt colours to light/dark theme | true |
-| Wrap long lines | Word wrap in the log editor | false |
-| Font size for log viewer | Font size in points | 12 |
-| Export format preference | Default export format | CSV |
+| Max lines to parse | Maximum number of lines the log editor loads from a file | 100,000 |
+| Font size for log viewer | Font size of the log editor table, in points | 12 |
+| Editor export format | Format used by the log editor's Export button (CSV, JSON, Plain Text) | CSV |
+| Use theme-aware colours | Colour levels with the current theme's palette instead of fixed colours | true |
 
 ## Usage
 
 ### Open a Log File
-Tools → LogParser Pro → **Open Log File** — select any `.log` or `.out` file.
+Open any `.log` or `.out` file and switch to the **LogParser** editor tab (next to the text editor) for the
+table view with level toggles, search and export.
 
 ### Analyze a Log File
 Tools → LogParser Pro → **Analyze Log** — run full analysis (statistics + anomaly detection) on the current file.

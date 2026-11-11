@@ -1,293 +1,44 @@
-# LogParser Pro - Quick Start Guide
+# LogParser Pro — Quick Start
 
-## 🚀 Get Up and Running in 5 Minutes
+## Prerequisites
 
-### Prerequisites
+- JDK 21 (the Gradle toolchain targets Java 21; IntelliJ Platform 2025.1+)
+- Git
 
-- ✅ JDK 17 or higher installed
-- ✅ IntelliJ IDEA 2023.2+ (any edition)
-- ✅ Git installed
-
----
-
-## Step 1: Clone & Build
+## Build and run
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/logparser.git
-cd logparser
-
-# Make gradlew executable (Unix/Mac)
-chmod +x gradlew
-
-# Build the plugin
-./gradlew build
+git clone https://github.com/JirakJ/logparser-premium-plugin.git
+cd logparser-premium-plugin
+./gradlew buildPlugin        # plugin ZIP in build/distributions/
+./gradlew runIde             # sandbox IDE with the plugin installed
 ```
 
-**Expected output:** `BUILD SUCCESSFUL`
+## Try it
 
----
+1. Create `test.log`:
 
-## Step 2: Run in Development Mode
+   ```log
+   2024-01-15 10:30:45.123 INFO [main] Starting application
+   2024-01-15 10:30:46.456 DEBUG [worker-1] Processing request X-Request-ID: abc-123-def
+   2024-01-15 10:30:47.789 ERROR [worker-1] Failed to connect to database
+   java.sql.SQLException: Connection refused
+       at com.example.Database.connect(Database.java:45)
+       at com.example.App.main(App.java:12)
+   2024-01-15 10:30:48.012 WARN [main] Retrying connection...
+   ```
+
+2. Open it in the sandbox IDE — the text editor highlights levels; the **LogParser** tab shows the table view.
+3. **Tools → LogParser Pro** offers Analyze Log, Group Exceptions, Show Error Timeline, Export Log…,
+   Redact Secrets to File… and Diff With Another Log….
+4. Select `abc-123-def` → right-click → **LogParser Pro → Find Correlation ID**.
+5. The **LogParser Pro** tool window (bottom) has Log Viewer, Search, Correlation and Statistics tabs.
+
+## Checks
 
 ```bash
-# This will open a new IntelliJ IDEA instance with your plugin installed
-./gradlew runIde
+./gradlew detekt test        # static analysis + unit tests
+./gradlew verifyPlugin       # JetBrains Plugin Verifier (also run in CI)
 ```
 
-**What happens:**
-- New IntelliJ IDEA window opens
-- LogParser Pro is already installed
-- You can test all features
-
----
-
-## Step 3: Try the Free Features
-
-### Open a Log File
-
-1. Create a test log file: `test.log`
-
-```log
-2024-01-15 10:30:45.123 INFO [main] Starting application
-2024-01-15 10:30:46.456 DEBUG [worker-1] Processing request X-Request-ID: abc-123-def
-2024-01-15 10:30:47.789 ERROR [worker-1] Failed to connect to database
-java.sql.SQLException: Connection refused
-    at com.example.Database.connect(Database.java:45)
-    at com.example.App.main(App.java:12)
-2024-01-15 10:30:48.012 WARN [main] Retrying connection...
-2024-01-15 10:30:49.345 INFO [main] X-Request-ID: abc-123-def - Request completed
-```
-
-2. **Menu:** `LogParser Pro` → `Open Log File`
-3. Select `test.log`
-4. See syntax highlighting, log levels, and filtering
-
-### View Tool Window
-
-1. **View** → **Tool Windows** → **LogParser Pro**
-2. See welcome screen with feature overview
-
----
-
-## Step 4: Try Advanced Features
-
-### Track Correlation ID
-
-1. Open `test.log` in LogParser editor
-2. Select `abc-123-def` in the editor
-3. Right-click → **Find Correlation ID**
-4. See all log entries with this correlation ID highlighted
-
-### Connect to Kubernetes (if available)
-
-1. **Menu:** `LogParser Pro` → `Connect Log Source`
-2. Select **Kubernetes Pod**
-3. Choose namespace and pod
-4. Live tail logs with correlation tracking
-
----
-
-## Step 5: Build Distributable Plugin
-
-```bash
-# Build the plugin ZIP file
-./gradlew buildPlugin
-```
-
-**Output location:** `build/distributions/logparser-pro-1.0.0-SNAPSHOT.zip`
-
-### Install in Your Production IDE
-
-1. Open IntelliJ IDEA (your normal instance)
-2. **Settings/Preferences** → **Plugins**
-3. Click ⚙️ → **Install Plugin from Disk**
-4. Select `build/distributions/logparser-pro-1.0.0-SNAPSHOT.zip`
-5. Restart IDE
-
----
-
-## Step 7: Run Tests
-
-```bash
-# Run all tests
-./gradlew test
-
-# View test report
-open build/reports/tests/test/index.html
-```
-
----
-
-## Common Development Tasks
-
-### Clean Build
-
-```bash
-./gradlew clean build
-```
-
-### Run with Debugging
-
-```bash
-./gradlew runIde --debug-jvm
-```
-
-Then attach IntelliJ debugger to port 5005.
-
-### Verify Plugin Compatibility
-
-```bash
-./gradlew verifyPlugin
-```
-
-### Update Dependencies
-
-Edit `build.gradle.kts`, then:
-
-```bash
-./gradlew build --refresh-dependencies
-```
-
----
-
-## Troubleshooting
-
-### "BUILD FAILED: Could not find JDK 17"
-
-**Solution:** Set `JAVA_HOME` environment variable:
-
-```bash
-# Mac (add to ~/.zshrc or ~/.bash_profile)
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-
-# Linux
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-
-# Windows (System Properties → Environment Variables)
-JAVA_HOME=C:\Program Files\Java\jdk-17
-```
-
-### "Plugin verification failed"
-
-**Solution:** Check IntelliJ Platform version compatibility:
-
-```kotlin
-// In build.gradle.kts
-intellij {
-    version.set("2023.2.5") // Must match your IDE version
-}
-```
-
-### "Cannot resolve symbol LogParser"
-
-**Solution:** Reimport Gradle project:
-
-1. Right-click on `build.gradle.kts`
-2. **Gradle** → **Reload Gradle Project**
-
----
-
-## Next Steps
-
-### For Developers
-
-1. ✅ Read `docs/ARCHITECTURE.md` for technical details
-2. ✅ Check `CONTRIBUTING.md` for development guidelines
-3. ✅ Add unit tests for new features
-4. ✅ Submit issues/PRs on GitHub
-
-### For Marketers
-
-1. ✅ Read `docs/MARKETING_PLAN.md` for go-to-market strategy
-3. ✅ Prepare demo video and screenshots
-4. ✅ Submit to JetBrains Marketplace
-
-### For Users
-
-1. ✅ Try free features on your real log files
-2. ✅ Try every feature — all of them are free
-3. ✅ Provide feedback via GitHub Issues
-4. ✅ Share with colleagues if you find it useful
-
----
-
-## Useful Commands Cheat Sheet
-
-```bash
-# Build
-./gradlew build                    # Build plugin
-./gradlew buildPlugin              # Build distributable ZIP
-./gradlew clean                    # Clean build artifacts
-
-# Run
-./gradlew runIde                   # Run in development IDE
-./gradlew runIde --debug-jvm       # Run with debugger
-
-# Test
-./gradlew test                     # Run tests
-./gradlew verifyPlugin             # Verify plugin
-
-# Publish (requires credentials)
-./gradlew publishPlugin            # Publish to JetBrains Marketplace
-```
-
----
-
-## Configuration Files
-
-### `build.gradle.kts`
-- Plugin version
-- Dependencies
-- IntelliJ Platform version
-- Publishing settings
-
-### `src/main/resources/META-INF/plugin.xml`
-- Plugin metadata
-- Actions and menus
-- Extensions and services
-
-### `gradle.properties`
-- JVM memory settings
-- Kotlin code style
-
----
-
-## Getting Help
-
-- 📚 **Documentation:** Check `README.md` and `docs/`
-- 🐛 **Issues:** https://github.com/yourusername/logparser/issues
-- 💬 **Discussions:** https://github.com/yourusername/logparser/discussions
-- 📧 **Email:** support@logparser.dev
-
----
-
-## What's Included
-
-- ✅ **21 Kotlin source files** (1,487 lines of code)
-- ✅ **Log parsing engine** (timestamps, levels, correlation IDs)
-- ✅ **Multi-source support** (Local files, Kubernetes)
-- ✅ **Correlation tracking**
-- ✅ **IntelliJ UI integration** (Tool window, actions, editors)
-- ✅ **CI/CD pipeline** (GitHub Actions)
-- ✅ **Comprehensive documentation** (5 markdown files)
-
----
-
-## Time to Launch
-
-**Estimated:** 2-4 weeks from now
-
-**Remaining tasks:**
-1. ⏳ Add plugin icon and screenshots
-2. ⏳ Create demo video
-3. ⏳ Write unit tests (target 80% coverage)
-4. ⏳ Beta test with 10-20 users
-5. ⏳ Submit to JetBrains Marketplace
-6. ⏳ Launch marketing campaign
-
----
-
-**Ready to ship! 🚀**
-
-Good luck building your $1M+ ARR product! 💎
+CI runs the same gates on GitHub-hosted runners for every pull request.

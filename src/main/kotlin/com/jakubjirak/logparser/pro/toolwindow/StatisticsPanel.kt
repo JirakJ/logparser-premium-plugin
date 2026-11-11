@@ -109,11 +109,11 @@ class StatisticsPanel(private val project: Project) {
                 appendLine()
                 appendLine("Entries per Hour:")
                 val maxHourCount = stats.entriesPerHour.values.maxOrNull() ?: 1
-                (0..23).forEach { hour ->
+                for (hour in 0..23) {
                     val count = stats.entriesPerHour[hour] ?: 0
                     val barLength = (count.toDouble() / maxHourCount * 20).toInt()
                     val bar = "▓".repeat(barLength)
-                    appendLine("  ${String.format("%02d", hour)}:00 $bar $count")
+                    appendLine("  ${hour.toString().padStart(2, '0')}:00 $bar $count")
                 }
             }
         }

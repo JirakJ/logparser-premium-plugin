@@ -140,4 +140,27 @@ class StructuredLogParserTest {
         assertNull(result.fields["level"])
         assertNull(result.fields["message"])
     }
+
+    @Test
+    fun `logfmt skips bare tokens and keeps later pairs`() {
+        val fields = parser.parse("level=warn flag msg=done user=alice")
+        assertEquals(StructuredFormat.LOGFMT, fields.format)
+        assertEquals(LogLevel.WARN, fields.level)
+        assertEquals("done", fields.message)
+        assertEquals("alice", fields.fields["user"])
+        assertTrue("flag" !in fields.fields)
+    }
+
+    @Test
+    fun `logfmt tolerates an unterminated quoted value`() {
+        val fields = parser.parse("level=info msg=\"never closed")
+        assertEquals("never closed", fields.message)
+    }
+
+    @Test
+    fun `logfmt empty value and trailing backslash are handled`() {
+        val fields = parser.parse("""level=info msg=hi empty= path="C:\\tmp\\"""")
+        assertEquals("", fields.fields["empty"])
+        assertTrue(fields.fields.containsKey("path"))
+    }
 }

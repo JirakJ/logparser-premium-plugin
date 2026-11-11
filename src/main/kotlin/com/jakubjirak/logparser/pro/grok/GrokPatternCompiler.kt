@@ -80,32 +80,27 @@ class GrokPatternCompiler(
     }
 
     private fun expandReference(inner: String, state: CompileState, visiting: Set<String>): String {
-        if (state.incrementAndCheck() > maxExpansions) {
-            throw GrokCompileException("Grok expansion exceeded $maxExpansions tokens")
-        }
         val parts = inner.split(':')
         val name = parts[0].trim()
         val field = parts.getOrNull(1)?.trim()?.takeIf { it.isNotEmpty() }
-        if (!VALID_NAME.matches(name)) {
-            throw GrokCompileException("Invalid pattern name '$name'")
-        }
-        if (name in visiting) {
-            throw GrokCompileException("Cyclic grok reference detected at '$name'")
-        }
-        val body = patterns[name] ?: throw GrokCompileException("Unknown grok pattern '$name'")
-        val expandedBody = expand(body, state, visiting + name)
-        return if (field == null) {
-            "(?:$expandedBody)"
-        } else {
-            if (!VALID_NAME.matches(field)) {
-                throw GrokCompileException("Invalid field name '$field'")
-            }
-            if (!state.fields.add(field)) {
-                throw GrokCompileException("Duplicate field name '$field'")
-            }
-            "(?<$field>$expandedBody)"
-        }
+        val error = referenceError(name, field, state, visiting)
+        if (error != null) throw GrokCompileException(error)
+        val expandedBody = expand(patterns.getValue(name), state, visiting + name)
+        if (field == null) return "(?:$expandedBody)"
+        if (!state.fields.add(field)) throw GrokCompileException("Duplicate field name '$field'")
+        return "(?<$field>$expandedBody)"
     }
+
+    /** Validates a `%{NAME:field}` reference; returns an error message or `null` when it is valid. */
+    private fun referenceError(name: String, field: String?, state: CompileState, visiting: Set<String>): String? =
+        when {
+            state.incrementAndCheck() > maxExpansions -> "Grok expansion exceeded $maxExpansions tokens"
+            !VALID_NAME.matches(name) -> "Invalid pattern name '$name'"
+            name in visiting -> "Cyclic grok reference detected at '$name'"
+            name !in patterns -> "Unknown grok pattern '$name'"
+            field != null && !VALID_NAME.matches(field) -> "Invalid field name '$field'"
+            else -> null
+        }
 
     private class CompileState {
         val fields: LinkedHashSet<String> = LinkedHashSet()
@@ -146,7 +141,8 @@ class GrokPatternCompiler(
             "URIPROTO" to """[A-Za-z]+(?:\+[A-Za-z+]+)?""",
             "URIHOST" to """%{IPORHOST}(?::%{POSINT:port})?""",
             "IPORHOST" to """(?:%{HOSTNAME}|%{IP})""",
-            "MONTH" to """\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b""",
+            "MONTH" to """\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|""" +
+                """Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b""",
             "MONTHNUM" to """(?:0?[1-9]|1[0-2])""",
             "MONTHDAY" to """(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])""",
             "DAY" to """(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)""",

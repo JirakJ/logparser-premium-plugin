@@ -111,7 +111,7 @@ class StructuredLogParser {
     private fun parseJson(line: String): StructuredFields? {
         val element: JsonElement = try {
             JsonParser.parseString(line)
-        } catch (ex: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             return null
         }
         if (!element.isJsonObject) return null
@@ -135,46 +135,8 @@ class StructuredLogParser {
 
     // ---- logfmt ------------------------------------------------------------
 
-    private fun parseLogfmt(line: String): StructuredFields {
-        val fields = LinkedHashMap<String, String>()
-        var i = 0
-        val n = line.length
-        while (i < n) {
-            while (i < n && line[i].isWhitespace()) i++
-            if (i >= n) break
-            val keyStart = i
-            while (i < n && line[i] != '=' && !line[i].isWhitespace()) i++
-            if (i >= n || line[i] != '=') {
-                // bare token — ignore
-                while (i < n && !line[i].isWhitespace()) i++
-                continue
-            }
-            val key = line.substring(keyStart, i)
-            i++ // consume '='
-            val valueBuilder = StringBuilder()
-            if (i < n && line[i] == '"') {
-                i++
-                while (i < n) {
-                    val c = line[i]
-                    if (c == '\\' && i + 1 < n) {
-                        valueBuilder.append(line[i + 1])
-                        i += 2
-                        continue
-                    }
-                    if (c == '"') { i++; break }
-                    valueBuilder.append(c)
-                    i++
-                }
-            } else {
-                while (i < n && !line[i].isWhitespace()) {
-                    valueBuilder.append(line[i])
-                    i++
-                }
-            }
-            if (key.isNotEmpty()) fields[key] = valueBuilder.toString()
-        }
-        return fromFields(fields, line, StructuredFormat.LOGFMT)
-    }
+    private fun parseLogfmt(line: String): StructuredFields =
+        fromFields(LogfmtScanner.scan(line), line, StructuredFormat.LOGFMT)
 
     private fun looksLikeLogfmt(s: String): Boolean {
         if (s.isEmpty() || s.startsWith("{")) return false

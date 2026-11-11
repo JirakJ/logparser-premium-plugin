@@ -14,8 +14,5 @@ import com.intellij.lang.Language
  */
 object LogLanguage : Language("Log") {
 
-    /** Prevents serialisation warnings. */
-    private fun readResolve(): Any = LogLanguage
-
     override fun getDisplayName(): String = "Log"
 }

@@ -43,21 +43,9 @@ class FeedbackState : PersistentStateComponent<FeedbackState.State> {
  */
 class FeedbackNotifier : ProjectActivity {
 
-    @Suppress("MagicNumber")
     override suspend fun execute(project: Project) {
         val state = FeedbackState.getInstance().state
-        val now = System.currentTimeMillis()
-
-        if (state.firstActivation == 0L) {
-            state.firstActivation = now
-            return
-        }
-
-        if (state.feedbackShown || state.dismissed) return
-
-        val daysSinceFirst = (now - state.firstActivation) / (1000 * 60 * 60 * 24)
-        if (daysSinceFirst < 7) return
-
+        if (!shouldShowFeedback(state, System.currentTimeMillis())) return
         state.feedbackShown = true
 
         val notification = NotificationGroupManager.getInstance()
@@ -81,5 +69,24 @@ class FeedbackNotifier : ProjectActivity {
             })
 
         notification.notify(project)
+    }
+
+    companion object {
+        /** Days of usage before the one-off feedback balloon is offered. */
+        const val DAYS_BEFORE_PROMPT: Long = 7
+        private val DAY_MS: Long = java.util.concurrent.TimeUnit.DAYS.toMillis(1)
+
+        /**
+         * Decides whether the feedback balloon should be shown at [now].
+         * The first call only records the activation time (and never shows the prompt).
+         */
+        fun shouldShowFeedback(state: FeedbackState.State, now: Long): Boolean {
+            if (state.firstActivation == 0L) {
+                state.firstActivation = now
+                return false
+            }
+            if (state.feedbackShown || state.dismissed) return false
+            return (now - state.firstActivation) / DAY_MS >= DAYS_BEFORE_PROMPT
+        }
     }
 }

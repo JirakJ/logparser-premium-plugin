@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.guardsquare:proguard-gradle:7.6.1")
-    }
-}
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij.platform)
@@ -33,7 +24,6 @@ dependencies {
             providers.gradleProperty("platformType"),
             providers.gradleProperty("platformVersion"),
         )
-        instrumentationTools()
         pluginVerifier()
         zipSigner()
     }
@@ -105,76 +95,4 @@ tasks {
 detekt {
     config.setFrom(files("detekt.yml"))
     buildUponDefaultConfig = true
-    baseline = file("detekt-baseline.xml")
-}
-
-tasks.register<proguard.gradle.ProGuardTask>("obfuscate") {
-    dependsOn("jar")
-    
-    val jarFile = tasks.named<Jar>("jar").flatMap { it.archiveFile }
-    val obfuscatedJar = layout.buildDirectory.file("obfuscated/${project.name}-${project.version}-obfuscated.jar")
-    
-    injars(jarFile)
-    outjars(obfuscatedJar)
-    
-    // IntelliJ Platform classpath
-    val platformClasspath = configurations.getByName("compileClasspath").files
-    libraryjars(platformClasspath)
-    
-    // JDK modules
-    val javaHome = System.getProperty("java.home")
-    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.base.jmod")
-    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.desktop.jmod")
-    libraryjars(mapOf("jarfilter" to "!**.jar", "filter" to "!module-info.class"), "$javaHome/jmods/java.xml.jmod")
-    
-    keepattributes("SourceFile,LineNumberTable")
-    keepattributes("*Annotation*")
-    keepattributes("Signature")
-    keepattributes("InnerClasses")
-    keepattributes("Exceptions")
-    
-    optimizationpasses(3)
-    allowaccessmodification()
-    repackageclasses("")
-    overloadaggressively()
-    
-    keep("public class * extends com.intellij.openapi.actionSystem.AnAction { *; }")
-    keep("public class * implements com.intellij.openapi.components.PersistentStateComponent { *; }")
-    keep("public class * implements com.intellij.openapi.options.Configurable { *; }")
-    keep("public class * extends com.intellij.openapi.startup.ProjectActivity { *; }")
-    keep("public class * implements com.intellij.openapi.wm.ToolWindowFactory { *; }")
-    keep("public class * implements com.intellij.openapi.wm.StatusBarWidgetFactory { *; }")
-    keep("public class * implements com.intellij.codeInsight.daemon.LineMarkerProvider { *; }")
-    keep("public class * implements com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider { *; }")
-    keep("public class * extends com.intellij.openapi.fileEditor.FileEditorProvider { *; }")
-    keep("public class * implements com.intellij.openapi.project.ProjectManagerListener { *; }")
-    keep("public class * extends com.intellij.lang.annotation.Annotator { *; }")
-    keep("public class * implements com.intellij.psi.PsiElementFinder { *; }")
-    keep("public class * extends com.intellij.openapi.startup.StartupActivity { *; }")
-    keep("public class * implements com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener { *; }")
-    keep("public class * implements com.intellij.openapi.vcs.checkin.CheckinHandler { *; }")
-    keep("public class * extends com.intellij.openapi.vcs.checkin.CheckinHandlerFactory { *; }")
-    keep("public class * implements com.intellij.openapi.vfs.newvfs.BulkFileListener { *; }")
-    
-    keep("public class * { public static * getInstance(com.intellij.openapi.project.Project); }")
-    keep("public class * { public static * getInstance(); }")
-    
-    keep(mapOf("allowobfuscation" to false), "class ${project.group}.** { void runActivity(com.intellij.openapi.project.Project, kotlin.coroutines.Continuation); }")
-    
-    keepclassmembers("class * { ** INSTANCE; }")
-    keepclassmembers("class * extends com.intellij.openapi.components.PersistentStateComponent { *; }")
-    
-    keepattributes("RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations")
-    keep("class kotlin.Metadata { *; }")
-    
-    keepclassmembers("class * { static java.util.ResourceBundle getBundle(...); }")
-    
-    dontwarn("com.intellij.**")
-    dontwarn("org.jetbrains.**")
-    dontwarn("kotlin.**")
-    dontwarn("kotlinx.**")
-    
-    printmapping(layout.buildDirectory.file("proguard/mapping.txt"))
-    printseeds(layout.buildDirectory.file("proguard/seeds.txt"))
-    printusage(layout.buildDirectory.file("proguard/usage.txt"))
 }

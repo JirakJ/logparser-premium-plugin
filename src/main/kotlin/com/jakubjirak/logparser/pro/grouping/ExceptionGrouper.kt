@@ -52,12 +52,9 @@ class ExceptionGrouper {
      */
     fun group(entries: List<LogEntry>): List<ExceptionGroup> {
         val buckets = linkedMapOf<String, MutableList<LogEntry>>()
-        for (entry in entries) {
-            val trace = entry.stackTrace ?: continue
-            if (trace.isBlank()) continue
-            val sig = signatureOf(trace)
-            buckets.getOrPut(sig) { mutableListOf() }.add(entry)
-        }
+        entries
+            .filter { !it.stackTrace.isNullOrBlank() }
+            .forEach { entry -> buckets.getOrPut(signatureOf(entry.stackTrace!!)) { mutableListOf() }.add(entry) }
         return buckets.map { (sig, group) ->
             val times = group.mapNotNull { it.timestamp }
             val exemplar = group.first()

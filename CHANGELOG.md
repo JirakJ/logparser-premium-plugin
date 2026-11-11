@@ -2,6 +2,17 @@
 
 All notable changes to LogParser Pro will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- **Secret redaction** — password / token / API-key assignments were written as a literal `$1=[REDACTED]`; the key is now kept (`db.password=[REDACTED]`).
+- **Log editor export** — the editor's Export button now uses the shared exporter, so CSV cells are protected against spreadsheet formula injection and JSON output is fully escaped.
+- **Go to Line** in the log editor context menu now opens the log in the text editor at that line (it previously did nothing).
+
+### Removed
+- Settings that had no effect (default filter level, line numbers, auto-refresh, date format, custom correlation patterns, wrap lines).
+- Unused, broken log indexer; descriptions no longer advertise "ML" or indexed search.
+
 ## [2026.8.0] - 2026-11-10
 
 ### Changed

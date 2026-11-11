@@ -75,21 +75,22 @@ class LogLexer : LexerBase() {
         private val WARN_PATTERN = Regex("""\b(WARN|WARNING)\b""", RegexOption.IGNORE_CASE)
         private val INFO_PATTERN = Regex("""\bINFO\b""", RegexOption.IGNORE_CASE)
         private val DEBUG_PATTERN = Regex("""\bDEBUG\b""", RegexOption.IGNORE_CASE)
+        private val STACK_PREFIXES = listOf("at ", "Caused by:", "... ")
         private val TRACE_PATTERN = Regex("""\bTRACE\b""", RegexOption.IGNORE_CASE)
 
         /** Classifies a single line into the most significant [IElementType]. */
         internal fun classifyLine(line: String): IElementType {
             val trimmed = line.trimStart()
-            if (trimmed.startsWith("at ") || trimmed.startsWith("Caused by:") || trimmed.startsWith("... ")) {
-                return LogTokenTypes.STACK_TRACE
+            return when {
+                STACK_PREFIXES.any { trimmed.startsWith(it) } -> LogTokenTypes.STACK_TRACE
+                ERROR_PATTERN.containsMatchIn(line) -> LogTokenTypes.LEVEL_ERROR
+                WARN_PATTERN.containsMatchIn(line) -> LogTokenTypes.LEVEL_WARN
+                INFO_PATTERN.containsMatchIn(line) -> LogTokenTypes.LEVEL_INFO
+                DEBUG_PATTERN.containsMatchIn(line) -> LogTokenTypes.LEVEL_DEBUG
+                TRACE_PATTERN.containsMatchIn(line) -> LogTokenTypes.LEVEL_TRACE
+                TIMESTAMP_PATTERN.containsMatchIn(line) -> LogTokenTypes.TIMESTAMP
+                else -> LogTokenTypes.TEXT
             }
-            if (ERROR_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_ERROR
-            if (WARN_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_WARN
-            if (INFO_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_INFO
-            if (DEBUG_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_DEBUG
-            if (TRACE_PATTERN.containsMatchIn(line)) return LogTokenTypes.LEVEL_TRACE
-            if (TIMESTAMP_PATTERN.containsMatchIn(line)) return LogTokenTypes.TIMESTAMP
-            return LogTokenTypes.TEXT
         }
     }
 }

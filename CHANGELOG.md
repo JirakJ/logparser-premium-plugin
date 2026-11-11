@@ -4,6 +4,8 @@ All notable changes to LogParser Pro will be documented in this file.
 
 ## [Unreleased]
 
+## [2026.9.0] - 2026-11-11
+
 ### Fixed
 - **Secret redaction** — password / token / API-key assignments were written as a literal `$1=[REDACTED]`; the key is now kept (`db.password=[REDACTED]`).
 - **Log editor export** — the editor's Export button now uses the shared exporter, so CSV cells are protected against spreadsheet formula injection and JSON output is fully escaped.

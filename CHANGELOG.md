@@ -4,6 +4,14 @@ All notable changes to LogParser Pro will be documented in this file.
 
 ## [Unreleased]
 
+## [2026.9.1] - 2026-11-12
+
+### Added
+- **Grok search** — the tool window's Search tab has a **Grok** option: patterns such as `%{LOGLEVEL:level} %{GREEDYDATA:msg}` are compiled by the bundled Grok compiler (previously advertised but not reachable from the UI) and each hit lists its extracted fields.
+
+### Fixed
+- **Search** — an invalid regex or Grok pattern now shows an error message in the Search tab instead of raising an IDE error; the pattern is compiled once per search instead of once per line.
+
 ## [2026.9.0] - 2026-11-11
 
 ### Fixed
